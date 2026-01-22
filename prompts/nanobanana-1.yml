@@ -1,14 +1,14 @@
 # 提示詞由 Issue #2 貢獻
 # 貢獻者: @doggy8088
 
-trigger: ":infographic1"
+trigger: ":nbp"
 label: "資訊圖表（可愛風）"
 description: "生成日本可愛風格的資訊圖表"
 
 prompt: |
   Infographic, Japan kawaii style, zh-tw language on text, cute, cheerful, pastel colors, clean lines, simple shapes, 16:9 aspect ratio, professional, easy to understand, detailed, high resolution, soft lighting, (best quality, masterpiece)
-  
+
   Negative prompt: ugly, deformed, noisy, blurry, low quality, bad anatomy, bad proportions, out of frame, text, watermark, signature
-  
+
   Content:
   {{content}}
