@@ -6,6 +6,7 @@
 import { readdir, readFile } from "fs/promises";
 import { join } from "path";
 import { parse } from "yaml";
+import { generateYamlWithFormFields } from "./detect-multiline-vars.ts";
 
 interface PromptConfig {
   trigger: string;
@@ -108,6 +109,26 @@ export function parseIssueContent(content: string): PromptConfig | null {
     description: descriptionMatch[1].trim(),
     prompt: promptMatch[1].trim(),
   };
+}
+
+/**
+ * 從 Issue 內容生成完整的 YAML 檔案（包含自動偵測的 form_fields）
+ */
+export function generateYamlFromIssue(
+  content: string,
+  issueNumber?: number,
+  contributor?: string
+): string | null {
+  const config = parseIssueContent(content);
+  if (!config) {
+    return null;
+  }
+
+  return generateYamlWithFormFields({
+    ...config,
+    issueNumber,
+    contributor,
+  });
 }
 
 /**

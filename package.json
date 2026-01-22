@@ -7,6 +7,8 @@
     "build": "bun run scripts/build.ts",
     "validate": "bun run scripts/validate.ts",
     "test:version": "bun run scripts/test-version.ts",
+    "test:multiline": "bun run scripts/test-multiline-detection.ts",
+    "test:issue-yaml": "bun run scripts/test-issue-to-yaml.ts",
     "bump": "bun run scripts/bump.ts",
     "bump:patch": "bun run scripts/bump.ts patch",
     "bump:minor": "bun run scripts/bump.ts minor",
