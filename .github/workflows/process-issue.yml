@@ -18,6 +18,17 @@ jobs:
       contents: read
       issues: write
     steps:
+      - name: Add eyes reaction
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.reactions.createForIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              content: 'eyes'
+            });
+
       - name: Check if re-validation requested
         id: check-command
         uses: actions/github-script@v7
@@ -195,6 +206,30 @@ jobs:
             console.log(`重新驗證成功: ${fileName}`);
             console.log(`Trigger: ${trigger}`);
 
+      - name: Remove eyes reaction
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const reactions = await github.rest.reactions.listForIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number
+            });
+            
+            const eyesReaction = reactions.data.find(r => 
+              r.content === 'eyes' && r.user.type === 'Bot'
+            );
+            
+            if (eyesReaction) {
+              await github.rest.reactions.deleteForIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                reaction_id: eyesReaction.id
+              });
+            }
+
   process-approval:
     name: 處理提示詞審核
     runs-on: ubuntu-latest
@@ -206,6 +241,17 @@ jobs:
       issues: write
       pull-requests: write
     steps:
+      - name: Add eyes reaction
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.reactions.createForIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              content: 'eyes'
+            });
+
       - name: Check if approved by owner
         id: check-approval
         uses: actions/github-script@v7
@@ -441,6 +487,30 @@ jobs:
               labels: ['prompt-contribution', 'approved']
             });
 
+      - name: Remove eyes reaction
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const reactions = await github.rest.reactions.listForIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number
+            });
+            
+            const eyesReaction = reactions.data.find(r => 
+              r.content === 'eyes' && r.user.type === 'Bot'
+            );
+            
+            if (eyesReaction) {
+              await github.rest.reactions.deleteForIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                reaction_id: eyesReaction.id
+              });
+            }
+
   validate-on-create:
     name: 驗證新建 Issue
     runs-on: ubuntu-latest
@@ -449,6 +519,24 @@ jobs:
       issues: write
       contents: read
     steps:
+      - name: Add eyes reaction
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const labels = issue.labels.map(l => l.name);
+            
+            if (!labels.includes('prompt-contribution')) {
+              return;
+            }
+            
+            await github.rest.reactions.createForIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              content: 'eyes'
+            });
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -593,3 +681,34 @@ jobs:
             console.log(`驗證成功: ${fileName}`);
             console.log(`Trigger: ${trigger}`);
             console.log(`檔案將建立於: prompts/${fileName}`);
+
+      - name: Remove eyes reaction
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const labels = issue.labels.map(l => l.name);
+            
+            if (!labels.includes('prompt-contribution')) {
+              return;
+            }
+            
+            const reactions = await github.rest.reactions.listForIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number
+            });
+            
+            const eyesReaction = reactions.data.find(r => 
+              r.content === 'eyes' && r.user.type === 'Bot'
+            );
+            
+            if (eyesReaction) {
+              await github.rest.reactions.deleteForIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                reaction_id: eyesReaction.id
+              });
+            }
