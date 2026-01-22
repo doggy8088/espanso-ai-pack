@@ -165,22 +165,10 @@ async function main(): Promise<void> {
   const yamlFiles = files.filter((f) => f.endsWith(".yml") || f.endsWith(".yaml"));
 
   let hasErrors = false;
-  const triggers = new Set<string>();
 
   for (const file of yamlFiles) {
     const filePath = join(PROMPTS_DIR, file);
     const result = await validatePromptFile(filePath);
-
-    // 檢查 trigger 重複
-    const content = await readFile(filePath, "utf-8");
-    const config = parse(content) as PromptConfig;
-    if (config.trigger) {
-      if (triggers.has(config.trigger)) {
-        result.errors.push(`trigger "${config.trigger}" 重複`);
-        result.valid = false;
-      }
-      triggers.add(config.trigger);
-    }
 
     // 輸出結果
     if (result.valid) {

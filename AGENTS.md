@@ -10,21 +10,21 @@
 
 ## Build, Test, and Development Commands
 - `bun install` installs dependencies.
-- `bun run validate` checks all prompt files for required fields, trigger rules, and duplicates.
+- `bun run validate` checks all prompt files for required fields and trigger rules. **Note:** Duplicate triggers are allowed since 2026-01-22.
 - `bun run build` generates `dist/package.yml` and syncs manifest metadata.
 - `bun run test:version` verifies version parity between `_manifest.yml` and `package.json`.
 - `bun run bump:patch|minor|major` bumps versions and runs the build.
 
 ## Coding Style & Naming Conventions
 - YAML prompt files use `trigger`, `label`, `description`, `prompt` keys and a multi-line block (`prompt: |`). When a variable should accept multi-line input (e.g. code, stack traces, long text), add `form_fields` with `multiline: true` for that variable.
-- Triggers must start with `:` and contain no spaces; prefer lowercase without dashes (e.g., `:codereview`).
+- Triggers must start with `:` and contain no spaces; prefer lowercase without dashes (e.g., `:codereview`). **Duplicate triggers are allowed** (multiple prompts can share the same trigger).
 - File names should mirror the trigger without dashes (e.g., `prompts/codereview.yml`).
 - Prompt variables use `{{name}}` or `{{name|default}}`; keep variable names descriptive.
 - TypeScript scripts use ES modules, 2-space indentation, double quotes, and semicolons (match existing style).
 
 ## Testing Guidelines
 There is no unit test framework. Validation is script-based:
-- Run `bun run validate` for schema/format checks and unique triggers.
+- Run `bun run validate` for schema/format checks (duplicate triggers are allowed).
 - Run `bun run test:version` when changing versions or manifests.
 
 ## Commit & Pull Request Guidelines
