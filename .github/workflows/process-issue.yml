@@ -209,15 +209,14 @@ jobs:
               validationMessage += `\n\n---\n\n⚠️ **提醒**：這個 Trigger \`${trigger}\` 已經存在於專案中。只要檔案名稱不同即可合併。您可以搜尋 [prompts/ 目錄](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/prompts) 查看現有的 Trigger。`;
             }
 
+            validationMessage += `\n\n**下一步：**\n維護者可以輸入 \`/approved\` 來核准此提示詞，系統將自動建立上述檔案並合併至專案。`;
+
             // 發送成功訊息，包含完整的 YAML 內容
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue.number,
               body: validationMessage
-
-            **下一步：**
-            維護者可以輸入 \`/approved\` 來核准此提示詞，系統將自動建立上述檔案並合併至專案。`
             });
 
             console.log(`重新驗證成功: ${fileName}`);
@@ -737,15 +736,14 @@ jobs:
               validationMessage += `\n\n---\n\n⚠️ **提醒**：這個 Trigger \`${trigger}\` 已經存在於專案中。只要檔案名稱不同即可合併。您可以搜尋 [prompts/ 目錄](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/prompts) 查看現有的 Trigger。`;
             }
 
+            validationMessage += `\n\n**下一步：**\n維護者可以輸入 \`/approved\` 來核准此提示詞，系統將自動建立上述檔案並合併至專案。`;
+
             // 發送成功訊息，包含完整的 YAML 內容
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue.number,
               body: validationMessage
-
-            **下一步：**
-            維護者可以輸入 \`/approved\` 來核准此提示詞，系統將自動建立上述檔案並合併至專案。`
             });
 
             console.log(`驗證成功: ${fileName}`);
