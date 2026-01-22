@@ -1,0 +1,86 @@
+name: 新增提示詞
+description: 貢獻一個新的 AI 提示詞到套件中
+title: "[Prompt] "
+labels: ["prompt-contribution"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感謝您貢獻提示詞！請按照以下格式填寫資訊。
+
+        ⚠️ **重要提醒**：
+        - Trigger 必須以冒號 `:` 開頭
+        - Trigger 不可包含空格
+        - 可以使用 `{{variable}}` 或 `{{variable|預設值}}` 格式定義變數
+
+  - type: input
+    id: trigger
+    attributes:
+      label: Trigger
+      description: 觸發提示詞的快捷鍵（必須以冒號開頭）
+      placeholder: ":my-prompt"
+    validations:
+      required: true
+
+  - type: input
+    id: label
+    attributes:
+      label: Label
+      description: 提示詞的顯示名稱
+      placeholder: "我的提示詞"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: 簡短說明這個提示詞的用途
+      placeholder: "這個提示詞用於..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: prompt
+    attributes:
+      label: Prompt
+      description: |
+        完整的提示詞內容。
+        可以使用 `{{variable}}` 定義需要使用者輸入的變數。
+        可以使用 `{{variable|預設值}}` 定義帶有預設值的變數。
+      placeholder: |
+        請幫我做以下事情：
+
+        {{description}}
+
+        要求：
+        1. ...
+        2. ...
+      render: markdown
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 分類
+      description: 這個提示詞屬於哪個類別？
+      options:
+        - 程式開發
+        - 寫作輔助
+        - 資料分析
+        - 學習教育
+        - 翻譯
+        - 其他
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: 確認事項
+      options:
+        - label: 我確認這個提示詞是原創的，或我有權分享此內容
+          required: true
+        - label: 我同意以 MIT 授權條款貢獻此提示詞
+          required: true

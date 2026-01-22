@@ -1,0 +1,25 @@
+# SQL 查詢提示詞
+# SQL Query Prompt
+
+trigger: ":sql-query"
+label: "SQL 查詢"
+description: "請 AI 撰寫或優化 SQL 查詢"
+
+prompt: |
+  請幫我撰寫 SQL 查詢：
+
+  **需求描述**：
+  {{requirement}}
+
+  **資料表結構**（如已知）：
+  ```
+  {{schema}}
+  ```
+
+  **資料庫類型**：{{database|PostgreSQL}}
+
+  請提供：
+  1. **完整的 SQL 查詢**
+  2. **查詢邏輯說明**
+  3. **效能考量**：是否需要索引？
+  4. **替代方案**：如有其他寫法，請一併說明

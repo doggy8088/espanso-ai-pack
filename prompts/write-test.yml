@@ -1,0 +1,24 @@
+# 撰寫測試提示詞
+# Write Test Prompt
+
+trigger: ":write-test"
+label: "撰寫測試"
+description: "請 AI 為程式碼撰寫單元測試"
+
+prompt: |
+  請為以下程式碼撰寫完整的單元測試：
+
+  要求：
+  1. **測試框架**：使用 {{framework|Jest}} 框架
+  2. **覆蓋率**：涵蓋所有主要功能和邊界情況
+  3. **測試案例**：
+     - 正常情況（Happy Path）
+     - 邊界條件（Edge Cases）
+     - 錯誤處理（Error Handling）
+  4. **命名規範**：測試名稱要清楚描述測試目的
+  5. **Mock/Stub**：如需要，說明如何模擬依賴
+
+  程式碼：
+  ```
+  {{code}}
+  ```

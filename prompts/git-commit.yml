@@ -1,0 +1,23 @@
+# Git Commit 訊息提示詞
+# Git Commit Message Prompt
+
+trigger: ":git-commit"
+label: "Git Commit 訊息"
+description: "請 AI 撰寫符合規範的 Git Commit 訊息"
+
+prompt: |
+  請根據以下變更內容，撰寫符合 Conventional Commits 規範的 Git Commit 訊息：
+
+  變更內容：
+  {{changes}}
+
+  規範要求：
+  1. **格式**：`<type>(<scope>): <subject>`
+  2. **類型**：feat, fix, docs, style, refactor, test, chore
+  3. **主旨**：50 字以內，使用祈使句
+  4. **內文**（如需要）：詳細說明變更原因與內容
+  5. **語言**：使用 {{language|英文}}
+
+  請提供：
+  - 完整的 commit 訊息
+  - 如有多個邏輯變更，建議拆分方式

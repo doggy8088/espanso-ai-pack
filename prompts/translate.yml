@@ -1,0 +1,18 @@
+# 翻譯提示詞
+# Translation Prompt
+
+trigger: ":translate"
+label: "翻譯文字"
+description: "請 AI 翻譯文字內容"
+
+prompt: |
+  請將以下內容翻譯成 {{target_language|繁體中文}}：
+
+  要求：
+  1. **準確性**：忠實傳達原文意思
+  2. **自然流暢**：符合目標語言的表達習慣
+  3. **專業術語**：保持技術術語的準確性
+  4. **格式保留**：保持原文的格式結構
+
+  原文：
+  {{text}}

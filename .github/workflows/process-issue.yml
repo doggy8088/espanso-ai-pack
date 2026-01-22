@@ -1,0 +1,308 @@
+name: Process Prompt Contribution
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  process-approval:
+    name: 處理提示詞審核
+    runs-on: ubuntu-latest
+    if: |
+      github.event.issue.labels.*.name == 'prompt-contribution' || 
+      contains(github.event.issue.labels.*.name, 'prompt-contribution')
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Check if approved by owner
+        id: check-approval
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = context.payload.comment;
+            const issue = context.payload.issue;
+            
+            // 檢查是否為 /approved 指令
+            if (!comment.body.trim().toLowerCase().startsWith('/approved')) {
+              console.log('不是 /approved 指令，跳過');
+              return { approved: false };
+            }
+            
+            // 檢查是否為 repo owner 或有 write 權限
+            const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: comment.user.login
+            });
+            
+            const hasWriteAccess = ['admin', 'write'].includes(permission.permission);
+            
+            if (!hasWriteAccess) {
+              console.log(`使用者 ${comment.user.login} 沒有足夠權限`);
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: '❌ 抱歉，只有專案維護者可以核准提示詞。'
+              });
+              return { approved: false };
+            }
+            
+            console.log(`使用者 ${comment.user.login} 有權限，處理核准`);
+            return { 
+              approved: true,
+              issueNumber: issue.number,
+              issueBody: issue.body,
+              issueTitle: issue.title
+            };
+
+      - name: Checkout
+        if: steps.check-approval.outputs.result != '' && fromJSON(steps.check-approval.outputs.result).approved
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Bun
+        if: steps.check-approval.outputs.result != '' && fromJSON(steps.check-approval.outputs.result).approved
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        if: steps.check-approval.outputs.result != '' && fromJSON(steps.check-approval.outputs.result).approved
+        run: bun install
+
+      - name: Parse and validate prompt
+        if: steps.check-approval.outputs.result != '' && fromJSON(steps.check-approval.outputs.result).approved
+        id: parse-prompt
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body;
+            
+            // 解析 Issue 內容
+            const triggerMatch = body.match(/### Trigger\s*\n+([^\n]+)/i);
+            const labelMatch = body.match(/### Label\s*\n+([^\n]+)/i);
+            const descriptionMatch = body.match(/### Description\s*\n+([\s\S]*?)(?=### Prompt|$)/i);
+            const promptMatch = body.match(/### Prompt\s*\n+```[\s\S]*?\n([\s\S]*?)```/i) || 
+                               body.match(/### Prompt\s*\n+([\s\S]*?)(?=### |$)/i);
+            
+            if (!triggerMatch || !labelMatch || !descriptionMatch || !promptMatch) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `❌ 無法解析提示詞內容，請確保格式正確。\n\n**解析結果：**\n- Trigger: ${triggerMatch ? '✅' : '❌'}\n- Label: ${labelMatch ? '✅' : '❌'}\n- Description: ${descriptionMatch ? '✅' : '❌'}\n- Prompt: ${promptMatch ? '✅' : '❌'}`
+              });
+              return { valid: false };
+            }
+            
+            const trigger = triggerMatch[1].trim();
+            const label = labelMatch[1].trim();
+            const description = descriptionMatch[1].trim();
+            const prompt = promptMatch[1].trim();
+            
+            // 驗證 trigger 格式
+            const errors = [];
+            
+            if (!trigger.startsWith(':')) {
+              errors.push('Trigger 必須以冒號 `:` 開頭');
+            }
+            
+            if (trigger.includes(' ')) {
+              errors.push('Trigger 不可包含空格');
+            }
+            
+            if (trigger.length < 2) {
+              errors.push('Trigger 長度至少需要 2 個字元');
+            }
+            
+            if (prompt.length < 10) {
+              errors.push('Prompt 內容過短');
+            }
+            
+            if (errors.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `❌ 提示詞格式驗證失敗：\n\n${errors.map(e => `- ${e}`).join('\n')}`
+              });
+              return { valid: false };
+            }
+            
+            // 生成檔案名稱
+            const fileName = trigger.replace(/^:/, '').replace(/[^a-zA-Z0-9-]/g, '-') + '.yml';
+            
+            return {
+              valid: true,
+              trigger,
+              label,
+              description,
+              prompt,
+              fileName
+            };
+
+      - name: Check for duplicate trigger
+        if: |
+          steps.check-approval.outputs.result != '' && 
+          fromJSON(steps.check-approval.outputs.result).approved &&
+          steps.parse-prompt.outputs.result != '' &&
+          fromJSON(steps.parse-prompt.outputs.result).valid
+        id: check-duplicate
+        run: |
+          TRIGGER="${{ fromJSON(steps.parse-prompt.outputs.result).trigger }}"
+          if grep -r "trigger: \"$TRIGGER\"" prompts/ 2>/dev/null || grep -r "trigger: $TRIGGER" prompts/ 2>/dev/null; then
+            echo "duplicate=true" >> $GITHUB_OUTPUT
+          else
+            echo "duplicate=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Report duplicate
+        if: |
+          steps.check-duplicate.outputs.duplicate == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: '❌ 這個 Trigger 已經存在，請使用不同的 Trigger。'
+            });
+
+      - name: Create prompt file
+        if: |
+          steps.check-approval.outputs.result != '' && 
+          fromJSON(steps.check-approval.outputs.result).approved &&
+          steps.parse-prompt.outputs.result != '' &&
+          fromJSON(steps.parse-prompt.outputs.result).valid &&
+          steps.check-duplicate.outputs.duplicate == 'false'
+        run: |
+          TRIGGER='${{ fromJSON(steps.parse-prompt.outputs.result).trigger }}'
+          LABEL='${{ fromJSON(steps.parse-prompt.outputs.result).label }}'
+          DESCRIPTION='${{ fromJSON(steps.parse-prompt.outputs.result).description }}'
+          PROMPT='${{ fromJSON(steps.parse-prompt.outputs.result).prompt }}'
+          FILENAME='${{ fromJSON(steps.parse-prompt.outputs.result).fileName }}'
+          ISSUE_NUMBER='${{ github.event.issue.number }}'
+          ISSUE_AUTHOR='${{ github.event.issue.user.login }}'
+          
+          cat > "prompts/$FILENAME" << 'PROMPT_EOF'
+          # 提示詞由 Issue #$ISSUE_NUMBER 貢獻
+          # 貢獻者: @$ISSUE_AUTHOR
+
+          trigger: "$TRIGGER"
+          label: "$LABEL"
+          description: "$DESCRIPTION"
+
+          prompt: |
+          PROMPT_EOF
+          
+          # 處理多行 prompt
+          echo "$PROMPT" | sed 's/^/  /' >> "prompts/$FILENAME"
+
+      - name: Commit and push
+        if: |
+          steps.check-approval.outputs.result != '' && 
+          fromJSON(steps.check-approval.outputs.result).approved &&
+          steps.parse-prompt.outputs.result != '' &&
+          fromJSON(steps.parse-prompt.outputs.result).valid &&
+          steps.check-duplicate.outputs.duplicate == 'false'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          FILENAME='${{ fromJSON(steps.parse-prompt.outputs.result).fileName }}'
+          TRIGGER='${{ fromJSON(steps.parse-prompt.outputs.result).trigger }}'
+          
+          git add "prompts/$FILENAME"
+          git commit -m "feat: add prompt $TRIGGER from #${{ github.event.issue.number }}"
+          git push
+
+      - name: Close issue with success message
+        if: |
+          steps.check-approval.outputs.result != '' && 
+          fromJSON(steps.check-approval.outputs.result).approved &&
+          steps.parse-prompt.outputs.result != '' &&
+          fromJSON(steps.parse-prompt.outputs.result).valid &&
+          steps.check-duplicate.outputs.duplicate == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const result = ${{ steps.parse-prompt.outputs.result }};
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `✅ 提示詞已成功加入！\n\n**詳細資訊：**\n- Trigger: \`${result.trigger}\`\n- 檔案: \`prompts/${result.fileName}\`\n\n感謝您的貢獻！🎉`
+            });
+            
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              state: 'closed',
+              labels: ['prompt-contribution', 'approved']
+            });
+
+  validate-on-create:
+    name: 驗證新建 Issue
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && github.event.action == 'opened'
+    permissions:
+      issues: write
+    steps:
+      - name: Validate issue format
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const labels = issue.labels.map(l => l.name);
+            
+            if (!labels.includes('prompt-contribution')) {
+              return;
+            }
+            
+            const body = issue.body;
+            
+            // 快速格式檢查
+            const triggerMatch = body.match(/### Trigger\s*\n+([^\n]+)/i);
+            
+            if (triggerMatch) {
+              const trigger = triggerMatch[1].trim();
+              const errors = [];
+              
+              if (!trigger.startsWith(':')) {
+                errors.push('⚠️ Trigger 應以冒號 `:` 開頭');
+              }
+              
+              if (trigger.includes(' ')) {
+                errors.push('⚠️ Trigger 不應包含空格');
+              }
+              
+              if (errors.length > 0) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  body: `感謝您的貢獻！在提交審核前，請注意以下格式問題：\n\n${errors.join('\n')}\n\n請編輯 Issue 修正這些問題。`
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  body: `感謝您的貢獻！您的提示詞已收到，正在等待維護者審核。\n\n維護者可以輸入 \`/approved\` 來核准此提示詞。`
+                });
+              }
+            }
+
+on:
+  issues:
+    types: [opened]
