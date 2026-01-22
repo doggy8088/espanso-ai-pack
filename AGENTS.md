@@ -16,7 +16,7 @@
 - `bun run bump:patch|minor|major` bumps versions and runs the build.
 
 ## Coding Style & Naming Conventions
-- YAML prompt files use `trigger`, `label`, `description`, `prompt` keys and a multi-line block (`prompt: |`).
+- YAML prompt files use `trigger`, `label`, `description`, `prompt` keys and a multi-line block (`prompt: |`). When a variable should accept multi-line input (e.g. code, stack traces, long text), add `form_fields` with `multiline: true` for that variable.
 - Triggers must start with `:` and contain no spaces; prefer lowercase kebab-case (e.g., `:code-review`).
 - File names should mirror the trigger in kebab-case (e.g., `prompts/code-review.yml`).
 - Prompt variables use `{{name}}` or `{{name|default}}`; keep variable names descriptive.

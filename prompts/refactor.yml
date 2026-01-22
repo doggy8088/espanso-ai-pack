@@ -23,3 +23,7 @@ prompt: |
   ```
   {{code}}
   ```
+
+form_fields:
+  code:
+    multiline: true

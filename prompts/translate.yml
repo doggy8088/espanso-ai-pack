@@ -16,3 +16,7 @@ prompt: |
 
   原文：
   {{text}}
+
+form_fields:
+  text:
+    multiline: true

@@ -1,6 +1,6 @@
 # Espanso AI Pack
 # 自動生成的提示詞套件
-# 生成時間: 2026-01-22T08:11:44.348Z
+# 生成時間: 2026-01-22T09:08:24.192Z
 # 提示詞數量: 10
 
 matches:
@@ -20,6 +20,9 @@ matches:
       [[code]]
       ```
       
+    form_fields:
+      code:
+        multiline: true
 
   - trigger: ":explain-code"
     label: "解釋程式碼"
@@ -37,6 +40,9 @@ matches:
       [[code]]
       ```
       
+    form_fields:
+      code:
+        multiline: true
 
   - trigger: ":fix-bug"
     label: "修復 Bug"
@@ -62,6 +68,13 @@ matches:
       3. **預防措施**：如何避免類似問題再次發生？
       4. **測試建議**：如何驗證修復是否成功？
       
+    form_fields:
+      error_description:
+        multiline: true
+      error_message:
+        multiline: true
+      code:
+        multiline: true
 
   - trigger: ":git-commit"
     label: "Git Commit 訊息"
@@ -83,6 +96,8 @@ matches:
       - 如有多個邏輯變更，建議拆分方式
       
     form_fields:
+      changes:
+        multiline: true
       language:
         default: "英文"
 
@@ -107,6 +122,9 @@ matches:
       [[code]]
       ```
       
+    form_fields:
+      code:
+        multiline: true
 
   - trigger: ":sql-query"
     label: "SQL 查詢"
@@ -130,6 +148,10 @@ matches:
       4. **替代方案**：如有其他寫法，請一併說明
       
     form_fields:
+      requirement:
+        multiline: true
+      schema:
+        multiline: true
       database:
         default: "PostgreSQL"
 
@@ -148,6 +170,8 @@ matches:
       [[content]]
       
     form_fields:
+      content:
+        multiline: true
       length:
         default: "200"
 
@@ -166,6 +190,8 @@ matches:
       [[text]]
       
     form_fields:
+      text:
+        multiline: true
       target_language:
         default: "繁體中文"
 
@@ -189,6 +215,9 @@ matches:
       [[code]]
       ```
       
+    form_fields:
+      code:
+        multiline: true
 
   - trigger: ":write-test"
     label: "撰寫測試"
@@ -211,5 +240,7 @@ matches:
       ```
       
     form_fields:
+      code:
+        multiline: true
       framework:
         default: "Jest"

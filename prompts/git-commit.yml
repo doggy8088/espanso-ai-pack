@@ -21,3 +21,7 @@ prompt: |
   請提供：
   - 完整的 commit 訊息
   - 如有多個邏輯變更，建議拆分方式
+
+form_fields:
+  changes:
+    multiline: true

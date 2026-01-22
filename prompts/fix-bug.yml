@@ -26,3 +26,11 @@ prompt: |
   2. **修復方案**：完整的修復程式碼
   3. **預防措施**：如何避免類似問題再次發生？
   4. **測試建議**：如何驗證修復是否成功？
+
+form_fields:
+  error_description:
+    multiline: true
+  error_message:
+    multiline: true
+  code:
+    multiline: true

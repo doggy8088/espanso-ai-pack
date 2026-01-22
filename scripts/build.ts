@@ -13,6 +13,7 @@ interface PromptConfig {
   label: string;
   description: string;
   prompt: string;
+  form_fields?: Record<string, { multiline?: boolean; default?: string }>;
 }
 
 interface EspansoMatch {
@@ -20,7 +21,7 @@ interface EspansoMatch {
   label: string;
   replace?: string;
   form?: string;
-  form_fields?: Record<string, { default?: string }>;
+  form_fields?: Record<string, { default?: string; multiline?: boolean }>;
 }
 
 interface EspansoPackage {
@@ -99,12 +100,27 @@ function convertToEspansoMatch(config: PromptConfig): EspansoMatch {
   if (variables.length > 0) {
     match.form = convertPromptToForm(config.prompt);
 
-    const defaults = variables.filter((v) => v.default);
-    if (defaults.length > 0) {
-      match.form_fields = {};
-      for (const v of defaults) {
-        match.form_fields[v.name] = { default: v.default };
+    const formFields: Record<string, { default?: string; multiline?: boolean }> = {};
+
+    if (config.form_fields) {
+      for (const [name, options] of Object.entries(config.form_fields)) {
+        formFields[name] = { ...options };
       }
+    }
+
+    for (const v of variables) {
+      if (!v.default) {
+        continue;
+      }
+      const existing = formFields[v.name] ?? {};
+      if (!existing.default) {
+        existing.default = v.default;
+      }
+      formFields[v.name] = existing;
+    }
+
+    if (Object.keys(formFields).length > 0) {
+      match.form_fields = formFields;
     }
   } else {
     match.replace = config.prompt;
@@ -249,6 +265,9 @@ function generateYamlOutput(pkg: EspansoPackage): string {
           lines.push(`      ${field}:`);
           if (options.default) {
             lines.push(`        default: "${options.default}"`);
+          }
+          if (options.multiline) {
+            lines.push("        multiline: true");
           }
         }
       }

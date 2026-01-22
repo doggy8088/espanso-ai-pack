@@ -23,3 +23,9 @@ prompt: |
   2. **查詢邏輯說明**
   3. **效能考量**：是否需要索引？
   4. **替代方案**：如有其他寫法，請一併說明
+
+form_fields:
+  requirement:
+    multiline: true
+  schema:
+    multiline: true
