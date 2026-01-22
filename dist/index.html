@@ -11,7 +11,20 @@
       gtag('config', 'G-PEQ919M3FP');
     </script>
     <meta charset="UTF-8">
+    <meta name="description" content="Espanso AI 提示詞套件下載中心，提供常見 AI 提示詞與安裝指南。">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Espanso AI Pack - 下載中心">
+    <meta property="og:description" content="Espanso AI 提示詞套件下載中心，提供常見 AI 提示詞與安裝指南。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://doggy8088.github.io/espanso-ai-pack/">
+    <meta property="og:image" content="https://doggy8088.github.io/espanso-ai-pack/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="zh_TW">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" href="espanso-logo-square.svg" type="image/svg+xml">
+    <link rel="icon" href="favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <title>Espanso AI Pack - 下載中心</title>
     <style>
         * {
@@ -30,7 +43,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1050px;
             margin: 0 auto;
             background: white;
             border-radius: 16px;
@@ -138,6 +151,7 @@
             background: #2d2d2d;
             color: #f8f8f2;
             padding: 15px 20px;
+            padding-right: 110px;
             border-radius: 8px;
             font-family: 'Consolas', 'Monaco', monospace;
             margin: 10px 0;
@@ -149,6 +163,57 @@
         .install-code code {
             font-size: 0.9rem;
             display: block;
+        }
+
+        .copy-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #f8f8f2;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .copy-btn:active {
+            transform: translateY(-50%) scale(0.98);
+        }
+
+        .copy-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .copy-btn .icon-check {
+            display: none;
+        }
+
+        .copy-btn.copied .icon-copy {
+            display: none;
+        }
+
+        .copy-btn.copied .icon-check {
+            display: block;
+        }
+
+        .copy-btn.copied {
+            color: #51FBE5;
+            border-color: rgba(81, 251, 229, 0.6);
+            background: rgba(81, 251, 229, 0.15);
         }
 
         .features {
@@ -329,6 +394,14 @@
                     <p>直接從 GitHub repository 安裝，最簡單快速。</p>
                     <div class="install-code">
                         <code>espanso install espanso-ai-pack --git https://github.com/doggy8088/espanso-ai-pack --external</code>
+                        <button class="copy-btn" type="button" aria-label="複製指令" title="複製">
+                            <svg class="icon-copy" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M16 1H4C2.9 1 2 1.9 2 3v12h2V3h12V1zm3 4H8C6.9 5 6 5.9 6 7v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                            </svg>
+                            <svg class="icon-check" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M9 16.17l-3.88-3.88L3.7 13.7 9 19l12-12-1.41-1.41L9 16.17z"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
@@ -349,6 +422,14 @@
                     <p>已安裝者可透過指令更新到最新版本。</p>
                     <div class="install-code">
                         <code>espanso package update espanso-ai-pack</code>
+                        <button class="copy-btn" type="button" aria-label="複製指令" title="複製">
+                            <svg class="icon-copy" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M16 1H4C2.9 1 2 1.9 2 3v12h2V3h12V1zm3 4H8C6.9 5 6 5.9 6 7v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                            </svg>
+                            <svg class="icon-check" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M9 16.17l-3.88-3.88L3.7 13.7 9 19l12-12-1.41-1.41L9 16.17z"/>
+                            </svg>
+                        </button>
                     </div>
                     <p style="color: #666; margin-top: 10px;">更新後如未生效，請執行 <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">espanso restart</code>。</p>
                 </div>
@@ -358,6 +439,14 @@
                     <p>如不再使用，可透過指令移除套件。</p>
                     <div class="install-code">
                         <code>espanso uninstall espanso-ai-pack</code>
+                        <button class="copy-btn" type="button" aria-label="複製指令" title="複製">
+                            <svg class="icon-copy" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M16 1H4C2.9 1 2 1.9 2 3v12h2V3h12V1zm3 4H8C6.9 5 6 5.9 6 7v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                            </svg>
+                            <svg class="icon-check" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M9 16.17l-3.88-3.88L3.7 13.7 9 19l12-12-1.41-1.41L9 16.17z"/>
+                            </svg>
+                        </button>
                     </div>
                     <p style="color: #666; margin-top: 10px;">解除安裝後建議執行 <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">espanso restart</code>。</p>
                 </div>
@@ -459,30 +548,6 @@
             </section>
 
             <section class="section">
-                <h2>📦 下載套件</h2>
-                
-                <div class="download-card">
-                    <h3>主套件檔案 (package.yml)</h3>
-                    <p>包含所有提示詞的完整套件檔案，適用於手動安裝。</p>
-                    <a href="package.yml" download class="download-btn">⬇️ 下載 package.yml</a>
-                </div>
-
-                <div class="download-card">
-                    <h3>套件描述檔 (_manifest.yml)</h3>
-                    <p>套件的 metadata 檔案，包含版本號、作者等資訊。</p>
-                    <a href="_manifest.yml" download class="download-btn">⬇️ 下載 _manifest.yml</a>
-                </div>
-
-                <div class="download-card">
-                    <h3>說明文件 (README.md)</h3>
-                    <p>完整的使用說明與提示詞列表。</p>
-                    <a href="README.md" download class="download-btn">⬇️ 下載 README.md</a>
-                </div>
-            </section>
-
-            
-
-            <section class="section">
                 <h2>📚 更多資源</h2>
                 <div class="download-card">
                     <p>想了解更多？查看我們的完整文件：</p>
@@ -538,6 +603,66 @@
 
         // 設定建置日期
         document.getElementById('build-date').textContent = new Date().toLocaleDateString('zh-TW');
+
+        // 安裝指令一鍵複製
+        const fallbackCopyText = (text) => {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'absolute';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        };
+
+        document.querySelectorAll('.install-code').forEach((block) => {
+            const button = block.querySelector('.copy-btn');
+            const code = block.querySelector('code');
+
+            if (!button || !code) return;
+            if (!button.dataset.originalTitle) {
+                button.dataset.originalTitle = button.getAttribute('title') || '複製';
+            }
+
+            button.addEventListener('click', async () => {
+                const text = code.textContent.trim();
+                let copied = false;
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    try {
+                        await navigator.clipboard.writeText(text);
+                        copied = true;
+                    } catch {
+                        copied = false;
+                    }
+                }
+
+                if (!copied) {
+                    try {
+                        fallbackCopyText(text);
+                        copied = true;
+                    } catch {
+                        copied = false;
+                    }
+                }
+
+                if (copied) {
+                    button.classList.add('copied');
+                    button.setAttribute('aria-label', '已複製');
+                    button.setAttribute('title', '已複製');
+                    setTimeout(() => {
+                        button.classList.remove('copied');
+                        button.setAttribute('aria-label', '複製指令');
+                        button.setAttribute('title', button.dataset.originalTitle || '複製');
+                    }, 1500);
+                }
+            });
+        });
     </script>
 </body>
 </html>
