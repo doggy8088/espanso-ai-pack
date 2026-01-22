@@ -67,10 +67,10 @@ body:
       description: 這個提示詞屬於哪個類別？
       options:
         - 程式開發
+        - 生成圖片
         - 寫作輔助
         - 資料分析
         - 學習教育
-        - 翻譯
         - 其他
     validations:
       required: true
