@@ -1,12 +1,12 @@
 # Espanso AI Pack
 # 自動生成的提示詞套件
-# 生成時間: 2026-01-22T07:42:39.707Z
+# 生成時間: 2026-01-22T08:11:17.335Z
 # 提示詞數量: 10
 
 matches:
   - trigger: ":code-review"
     label: "程式碼審查"
-    replace: |
+    form: |
       請審查以下程式碼，並提供詳細的回饋：
       
       1. **程式碼品質**：是否遵循最佳實踐？
@@ -17,18 +17,13 @@ matches:
       
       程式碼：
       ```
-      {{code}}
+      [[code]]
       ```
       
-    vars:
-      - name: "code"
-        type: "form"
-        params:
-          prompt: "請輸入 code"
 
   - trigger: ":explain-code"
     label: "解釋程式碼"
-    replace: |
+    form: |
       請詳細解釋以下程式碼：
       
       1. **整體功能**：這段程式碼的主要目的是什麼？
@@ -39,31 +34,26 @@ matches:
       
       程式碼：
       ```
-      {{code}}
+      [[code]]
       ```
       
-    vars:
-      - name: "code"
-        type: "form"
-        params:
-          prompt: "請輸入 code"
 
   - trigger: ":fix-bug"
     label: "修復 Bug"
-    replace: |
+    form: |
       請幫我分析並修復這個 Bug：
       
       **錯誤描述**：
-      {{error_description}}
+      [[error_description]]
       
       **錯誤訊息**（如有）：
       ```
-      {{error_message}}
+      [[error_message]]
       ```
       
       **相關程式碼**：
       ```
-      {{code}}
+      [[code]]
       ```
       
       請提供：
@@ -72,53 +62,33 @@ matches:
       3. **預防措施**：如何避免類似問題再次發生？
       4. **測試建議**：如何驗證修復是否成功？
       
-    vars:
-      - name: "error_description"
-        type: "form"
-        params:
-          prompt: "請輸入 error_description"
-      - name: "error_message"
-        type: "form"
-        params:
-          prompt: "請輸入 error_message"
-      - name: "code"
-        type: "form"
-        params:
-          prompt: "請輸入 code"
 
   - trigger: ":git-commit"
     label: "Git Commit 訊息"
-    replace: |
+    form: |
       請根據以下變更內容，撰寫符合 Conventional Commits 規範的 Git Commit 訊息：
       
       變更內容：
-      {{changes}}
+      [[changes]]
       
       規範要求：
       1. **格式**：`<type>(<scope>): <subject>`
       2. **類型**：feat, fix, docs, style, refactor, test, chore
       3. **主旨**：50 字以內，使用祈使句
       4. **內文**（如需要）：詳細說明變更原因與內容
-      5. **語言**：使用 {{language}}
+      5. **語言**：使用 [[language]]
       
       請提供：
       - 完整的 commit 訊息
       - 如有多個邏輯變更，建議拆分方式
       
-    vars:
-      - name: "changes"
-        type: "form"
-        params:
-          prompt: "請輸入 changes"
-      - name: "language"
-        type: "form"
-        params:
-          prompt: "請輸入 language"
-          default: "英文"
+    form_fields:
+      language:
+        default: "英文"
 
   - trigger: ":refactor"
     label: "程式碼重構"
-    replace: |
+    form: |
       請重構以下程式碼，目標是：
       
       1. **提升可讀性**：讓程式碼更容易理解
@@ -134,29 +104,24 @@ matches:
       
       原始程式碼：
       ```
-      {{code}}
+      [[code]]
       ```
       
-    vars:
-      - name: "code"
-        type: "form"
-        params:
-          prompt: "請輸入 code"
 
   - trigger: ":sql-query"
     label: "SQL 查詢"
-    replace: |
+    form: |
       請幫我撰寫 SQL 查詢：
       
       **需求描述**：
-      {{requirement}}
+      [[requirement]]
       
       **資料表結構**（如已知）：
       ```
-      {{schema}}
+      [[schema]]
       ```
       
-      **資料庫類型**：{{database}}
+      **資料庫類型**：[[database]]
       
       請提供：
       1. **完整的 SQL 查詢**
@@ -164,50 +129,32 @@ matches:
       3. **效能考量**：是否需要索引？
       4. **替代方案**：如有其他寫法，請一併說明
       
-    vars:
-      - name: "requirement"
-        type: "form"
-        params:
-          prompt: "請輸入 requirement"
-      - name: "schema"
-        type: "form"
-        params:
-          prompt: "請輸入 schema"
-      - name: "database"
-        type: "form"
-        params:
-          prompt: "請輸入 database"
-          default: "PostgreSQL"
+    form_fields:
+      database:
+        default: "PostgreSQL"
 
   - trigger: ":summarize"
     label: "內容摘要"
-    replace: |
+    form: |
       請為以下內容提供摘要：
       
       要求：
-      1. **摘要長度**：約 {{length}} 字
+      1. **摘要長度**：約 [[length]] 字
       2. **重點提取**：列出 3-5 個關鍵要點
       3. **結構清晰**：使用條列式呈現
       4. **保持客觀**：忠實反映原文內容
       
       內容：
-      {{content}}
+      [[content]]
       
-    vars:
-      - name: "length"
-        type: "form"
-        params:
-          prompt: "請輸入 length"
-          default: "200"
-      - name: "content"
-        type: "form"
-        params:
-          prompt: "請輸入 content"
+    form_fields:
+      length:
+        default: "200"
 
   - trigger: ":translate"
     label: "翻譯文字"
-    replace: |
-      請將以下內容翻譯成 {{target_language}}：
+    form: |
+      請將以下內容翻譯成 [[target_language]]：
       
       要求：
       1. **準確性**：忠實傳達原文意思
@@ -216,22 +163,15 @@ matches:
       4. **格式保留**：保持原文的格式結構
       
       原文：
-      {{text}}
+      [[text]]
       
-    vars:
-      - name: "target_language"
-        type: "form"
-        params:
-          prompt: "請輸入 target_language"
-          default: "繁體中文"
-      - name: "text"
-        type: "form"
-        params:
-          prompt: "請輸入 text"
+    form_fields:
+      target_language:
+        default: "繁體中文"
 
   - trigger: ":write-doc"
     label: "撰寫文件"
-    replace: |
+    form: |
       請為以下程式碼撰寫完整的技術文件：
       
       要求：
@@ -246,22 +186,17 @@ matches:
       
       程式碼：
       ```
-      {{code}}
+      [[code]]
       ```
       
-    vars:
-      - name: "code"
-        type: "form"
-        params:
-          prompt: "請輸入 code"
 
   - trigger: ":write-test"
     label: "撰寫測試"
-    replace: |
+    form: |
       請為以下程式碼撰寫完整的單元測試：
       
       要求：
-      1. **測試框架**：使用 {{framework}} 框架
+      1. **測試框架**：使用 [[framework]] 框架
       2. **覆蓋率**：涵蓋所有主要功能和邊界情況
       3. **測試案例**：
          - 正常情況（Happy Path）
@@ -272,16 +207,9 @@ matches:
       
       程式碼：
       ```
-      {{code}}
+      [[code]]
       ```
       
-    vars:
-      - name: "framework"
-        type: "form"
-        params:
-          prompt: "請輸入 framework"
-          default: "Jest"
-      - name: "code"
-        type: "form"
-        params:
-          prompt: "請輸入 code"
+    form_fields:
+      framework:
+        default: "Jest"

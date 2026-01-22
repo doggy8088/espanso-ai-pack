@@ -18,15 +18,9 @@ interface PromptConfig {
 interface EspansoMatch {
   trigger: string;
   label: string;
-  replace: string;
-  vars?: Array<{
-    name: string;
-    type: string;
-    params: {
-      prompt: string;
-      default?: string;
-    };
-  }>;
+  replace?: string;
+  form?: string;
+  form_fields?: Record<string, { default?: string }>;
 }
 
 interface EspansoPackage {
@@ -64,9 +58,9 @@ function extractVariables(prompt: string): Array<{ name: string; default?: strin
 /**
  * 將 prompt 中的變數語法轉換為 espanso 格式
  */
-function convertPromptToEspanso(prompt: string): string {
-  // 將 {{variable|default}} 轉換為 {{variable}}
-  return prompt.replace(/\{\{(\w+)(?:\|[^}]+)?\}\}/g, "{{$1}}");
+function convertPromptToForm(prompt: string): string {
+  // 將 {{variable|default}} 轉換為 [[variable]] 以符合 Espanso form 格式
+  return prompt.replace(/\{\{(\w+)(?:\|[^}]+)?\}\}/g, "[[$1]]");
 }
 
 /**
@@ -95,24 +89,25 @@ async function parsePromptFile(filePath: string): Promise<PromptConfig | null> {
  */
 function convertToEspansoMatch(config: PromptConfig): EspansoMatch {
   const variables = extractVariables(config.prompt);
-  const convertedPrompt = convertPromptToEspanso(config.prompt);
 
   const match: EspansoMatch = {
     trigger: config.trigger,
     label: config.label || config.trigger,
-    replace: convertedPrompt,
   };
 
-  // 如果有變數，加入 vars 設定
+  // 如果有變數，使用 form (shorthand) 並加入預設值
   if (variables.length > 0) {
-    match.vars = variables.map((v) => ({
-      name: v.name,
-      type: "form",
-      params: {
-        prompt: `請輸入 ${v.name}`,
-        ...(v.default && { default: v.default }),
-      },
-    }));
+    match.form = convertPromptToForm(config.prompt);
+
+    const defaults = variables.filter((v) => v.default);
+    if (defaults.length > 0) {
+      match.form_fields = {};
+      for (const v of defaults) {
+        match.form_fields[v.name] = { default: v.default };
+      }
+    }
+  } else {
+    match.replace = config.prompt;
   }
 
   return match;
@@ -236,28 +231,36 @@ function generateYamlOutput(pkg: EspansoPackage): string {
     lines.push(`  - trigger: "${match.trigger}"`);
     lines.push(`    label: "${match.label}"`);
 
-    // 處理多行 replace
-    if (match.replace.includes("\n")) {
-      lines.push("    replace: |");
-      const replaceLines = match.replace.split("\n");
-      for (const line of replaceLines) {
-        lines.push(`      ${line}`);
-      }
-    } else {
-      lines.push(`    replace: "${match.replace}"`);
-    }
-
-    // 處理 vars
-    if (match.vars && match.vars.length > 0) {
-      lines.push("    vars:");
-      for (const v of match.vars) {
-        lines.push(`      - name: "${v.name}"`);
-        lines.push(`        type: "${v.type}"`);
-        lines.push("        params:");
-        lines.push(`          prompt: "${v.params.prompt}"`);
-        if (v.params.default) {
-          lines.push(`          default: "${v.params.default}"`);
+    // 處理 form 或 replace
+    if (match.form) {
+      if (match.form.includes("\n")) {
+        lines.push("    form: |");
+        const formLines = match.form.split("\n");
+        for (const line of formLines) {
+          lines.push(`      ${line}`);
         }
+      } else {
+        lines.push(`    form: "${match.form}"`);
+      }
+
+      if (match.form_fields && Object.keys(match.form_fields).length > 0) {
+        lines.push("    form_fields:");
+        for (const [field, options] of Object.entries(match.form_fields)) {
+          lines.push(`      ${field}:`);
+          if (options.default) {
+            lines.push(`        default: "${options.default}"`);
+          }
+        }
+      }
+    } else if (match.replace !== undefined) {
+      if (match.replace.includes("\n")) {
+        lines.push("    replace: |");
+        const replaceLines = match.replace.split("\n");
+        for (const line of replaceLines) {
+          lines.push(`      ${line}`);
+        }
+      } else {
+        lines.push(`    replace: "${match.replace}"`);
       }
     }
 
