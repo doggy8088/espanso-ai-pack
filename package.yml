@@ -1,7 +1,7 @@
 # Espanso AI Pack
 # 自動生成的提示詞套件
-# 生成時間: 2026-01-22T10:14:44.928Z
-# 提示詞數量: 10
+# 生成時間: 2026-01-22T12:45:50.348Z
+# 提示詞數量: 12
 
 matches:
   - trigger: ":codereview"
@@ -100,6 +100,28 @@ matches:
         multiline: true
       language:
         default: "英文"
+
+  - trigger: ":nbp"
+    label: "資訊圖表（可愛風）"
+    form: |
+      Infographic, Japan kawaii style, zh-tw language on text, cute, cheerful, pastel colors, clean lines, simple shapes, 16:9 aspect ratio, professional, easy to understand, detailed, high resolution, soft lighting, (best quality, masterpiece)
+      
+      Negative prompt: ugly, deformed, noisy, blurry, low quality, bad anatomy, bad proportions, out of frame, text, watermark, signature
+      
+      Content:
+      [[content]]
+      
+
+  - trigger: ":nbp"
+    label: "資訊圖表（專業風格）"
+    form: |
+      Infographic, $|$ style, zh-tw language on text, cheerful, clean lines, simple shapes, 16:9 aspect ratio, professional, easy to understand, detailed, high resolution, soft lighting, (best quality, masterpiece)
+      
+      Negative prompt: ugly, deformed, noisy, blurry, low quality, bad anatomy, bad proportions, out of frame, text, watermark, signature
+      
+      Content:
+      [[variable]]
+      
 
   - trigger: ":refactor"
     label: "程式碼重構"
