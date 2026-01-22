@@ -503,9 +503,13 @@ jobs:
           FILENAME='${{ fromJSON(steps.parse-prompt.outputs.result).fileName }}'
           TRIGGER='${{ fromJSON(steps.parse-prompt.outputs.result).trigger }}'
 
+          # 自動增加 patch 版本號
+          bun run bump:patch
+
           git add "prompts/$FILENAME"
           git add "dist/"
           git add "_manifest.yml"
+          git add "package.json"
           git commit -m "feat: add prompt $TRIGGER from #${{ github.event.issue.number }}"
           git push
 
