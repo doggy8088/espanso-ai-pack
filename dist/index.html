@@ -15,13 +15,13 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a7b 100%);
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             background: white;
             border-radius: 16px;
@@ -30,16 +30,24 @@
         }
 
         header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a7b 100%);
             color: white;
             padding: 40px;
             text-align: center;
+        }
+
+        .logo {
+            height: 60px;
+            margin-right: 15px;
+            vertical-align: middle;
         }
 
         header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
             font-weight: 700;
+            display: inline-flex;
+            align-items: center;
         }
 
         header p {
@@ -66,10 +74,10 @@
         }
 
         .section h2 {
-            color: #667eea;
+            color: #2d5a7b;
             margin-bottom: 20px;
             font-size: 1.8rem;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #2d5a7b;
             padding-left: 15px;
         }
 
@@ -84,8 +92,8 @@
 
         .download-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
-            border-color: #667eea;
+            box-shadow: 0 8px 24px rgba(30, 58, 95, 0.2);
+            border-color: #2d5a7b;
         }
 
         .download-card h3 {
@@ -101,7 +109,7 @@
 
         .download-btn {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a7b 100%);
             color: white;
             padding: 12px 30px;
             border-radius: 8px;
@@ -114,7 +122,7 @@
 
         .download-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(30, 58, 95, 0.4);
         }
 
         .install-code {
@@ -126,10 +134,12 @@
             margin: 10px 0;
             position: relative;
             overflow-x: auto;
+            white-space: nowrap;
         }
 
         .install-code code {
             font-size: 0.9rem;
+            display: block;
         }
 
         .features {
@@ -140,14 +150,14 @@
         }
 
         .feature-item {
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            background: linear-gradient(135deg, #1e3a5f15 0%, #2d5a7b15 100%);
             padding: 20px;
             border-radius: 8px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #2d5a7b;
         }
 
         .feature-item h4 {
-            color: #667eea;
+            color: #2d5a7b;
             margin-bottom: 8px;
         }
 
@@ -167,7 +177,7 @@
         .stat-number {
             font-size: 2.5rem;
             font-weight: 700;
-            color: #667eea;
+            color: #2d5a7b;
             display: block;
         }
 
@@ -186,7 +196,7 @@
         }
 
         footer a {
-            color: #667eea;
+            color: #2d5a7b;
             text-decoration: none;
             font-weight: 600;
         }
@@ -222,7 +232,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>🚀 Espanso AI Pack</h1>
+            <h1><img src="espanso-logo.svg" alt="Espanso Logo" class="logo">AI Pack</h1>
             <p>AI 提示詞套件 - 讓您的工作效率翻倍</p>
             <div class="version-badge" id="version">Version: Loading...</div>
         </header>
@@ -328,7 +338,7 @@
         </main>
 
         <footer>
-            <p>Made with ❤️ by Will 保哥</p>
+            <p>Made with ❤️ by <a href="https://www.facebook.com/will.fans/">Will 保哥</a></p>
             <div class="links">
                 <a href="https://github.com/doggy8088/espanso-ai-pack">GitHub</a>
                 <a href="https://github.com/doggy8088/espanso-ai-pack/issues">Issues</a>
