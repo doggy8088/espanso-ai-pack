@@ -9,3 +9,6 @@ contact_links:
   - name: 📖 Espanso 官方文件
     url: https://espanso.org/docs/
     about: 了解更多關於 Espanso 的使用方式
+  - name: 🦸‍♂️ Espanso 進階表單語法
+    url: https://espanso.org/docs/matches/forms/
+    about: 了解更多關於 Espanso Forms 的語法
