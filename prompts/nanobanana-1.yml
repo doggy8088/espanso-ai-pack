@@ -12,3 +12,8 @@ prompt: |
 
   Content:
   {{content}}
+
+form_fields:
+  content:
+    multiline: true
+

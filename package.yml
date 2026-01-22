@@ -1,6 +1,6 @@
 # Espanso AI Pack
 # 自動生成的提示詞套件
-# 生成時間: 2026-01-22T12:45:50.348Z
+# 生成時間: 2026-01-22T12:56:18.042Z
 # 提示詞數量: 12
 
 matches:
@@ -111,6 +111,9 @@ matches:
       Content:
       [[content]]
       
+    form_fields:
+      content:
+        multiline: true
 
   - trigger: ":nbp"
     label: "資訊圖表（專業風格）"
@@ -120,8 +123,11 @@ matches:
       Negative prompt: ugly, deformed, noisy, blurry, low quality, bad anatomy, bad proportions, out of frame, text, watermark, signature
       
       Content:
-      [[variable]]
+      [[content]]
       
+    form_fields:
+      content:
+        multiline: true
 
   - trigger: ":refactor"
     label: "程式碼重構"

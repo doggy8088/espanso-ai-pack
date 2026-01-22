@@ -7,8 +7,12 @@ description: "生成一張專業風格的資訊圖表"
 
 prompt: |
   Infographic, $|$ style, zh-tw language on text, cheerful, clean lines, simple shapes, 16:9 aspect ratio, professional, easy to understand, detailed, high resolution, soft lighting, (best quality, masterpiece)
-  
+
   Negative prompt: ugly, deformed, noisy, blurry, low quality, bad anatomy, bad proportions, out of frame, text, watermark, signature
-  
+
   Content:
-  {{variable}}
+  {{content}}
+
+form_fields:
+  content:
+    multiline: true
