@@ -445,11 +445,12 @@ jobs:
         with:
           script: |
             const issue = context.payload.issue;
+            const trigger = '${{ fromJSON(steps.parse-prompt.outputs.result).trigger }}';
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue.number,
-              body: '❌ 這個 Trigger 已經存在，請使用不同的 Trigger。'
+              body: `⚠️ **提醒**：這個 Trigger \`${trigger}\` 已經存在於專案中。\n\n只要檔案名稱不同即可合併。您可以搜尋 [prompts/ 目錄](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/prompts) 查看現有的 Trigger。`
             });
 
       - name: Create prompt file
@@ -457,8 +458,7 @@ jobs:
           steps.check-approval.outputs.result != '' &&
           fromJSON(steps.check-approval.outputs.result).approved &&
           steps.parse-prompt.outputs.result != '' &&
-          fromJSON(steps.parse-prompt.outputs.result).valid &&
-          steps.check-duplicate.outputs.duplicate == 'false'
+          fromJSON(steps.parse-prompt.outputs.result).valid
         run: |
           TRIGGER='${{ fromJSON(steps.parse-prompt.outputs.result).trigger }}'
           LABEL='${{ fromJSON(steps.parse-prompt.outputs.result).label }}'
