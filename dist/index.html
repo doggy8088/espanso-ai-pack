@@ -222,6 +222,40 @@
             flex-wrap: wrap;
         }
 
+        .prompt-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #2d5a7b;
+            transition: all 0.2s ease;
+        }
+
+        .prompt-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .prompt-trigger {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #2d5a7b;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            display: inline-block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .prompt-desc {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .prompt-desc strong {
+            color: #333;
+        }
+
         @media (max-width: 768px) {
             header h1 {
                 font-size: 2rem;
@@ -255,7 +289,7 @@
                         <span class="stat-label">提示詞</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">5</span>
+                        <span class="stat-number">4</span>
                         <span class="stat-label">分類</span>
                     </div>
                     <div class="stat-item">
@@ -284,6 +318,101 @@
                         <h4>🔄 自動更新</h4>
                         <p>CI/CD 自動建置與發佈新版本</p>
                     </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📝 提示詞列表</h2>
+                <p style="color: #666; margin-bottom: 20px;">以下是套件中包含的所有提示詞，只需輸入觸發詞即可快速使用：</p>
+                
+                <div class="download-card">
+                    <h3>💻 程式開發類</h3>
+                    <div style="display: grid; gap: 15px; margin-top: 15px;">
+                        <div class="prompt-item">
+                            <div class="prompt-trigger">:code-review</div>
+                            <div class="prompt-desc">
+                                <strong>程式碼審查</strong> - 請 AI 審查程式碼並提供改進建議（程式碼品質、潛在問題、效能、可讀性）
+                            </div>
+                        </div>
+                        <div class="prompt-item">
+                            <div class="prompt-trigger">:explain-code</div>
+                            <div class="prompt-desc">
+                                <strong>解釋程式碼</strong> - 請 AI 詳細解釋程式碼的功能與邏輯（整體功能、逐行解析、關鍵概念）
+                            </div>
+                        </div>
+                        <div class="prompt-item">
+                            <div class="prompt-trigger">:fix-bug</div>
+                            <div class="prompt-desc">
+                                <strong>修復 Bug</strong> - 請 AI 分析並修復程式碼中的錯誤（問題分析、修復方案、預防措施）
+                            </div>
+                        </div>
+                        <div class="prompt-item">
+                            <div class="prompt-trigger">:refactor</div>
+                            <div class="prompt-desc">
+                                <strong>程式碼重構</strong> - 請 AI 重構程式碼以提升品質（可讀性、減少重複、改善結構、優化效能）
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="download-card">
+                    <h3>📚 文件與測試類</h3>
+                    <div style="display: grid; gap: 15px; margin-top: 15px;">
+                        <div class="prompt-item">
+                            <div class="prompt-trigger">:write-doc</div>
+                            <div class="prompt-desc">
+                                <strong>撰寫文件</strong> - 請 AI 為程式碼撰寫技術文件（概述、安裝設定、API 說明、使用範例）
+                            </div>
+                        </div>
+                        <div class="prompt-item">
+                            <div class="prompt-trigger">:write-test</div>
+                            <div class="prompt-desc">
+                                <strong>撰寫測試</strong> - 請 AI 為程式碼撰寫單元測試（正常情況、邊界條件、錯誤處理）
+                            </div>
+                        </div>
+                        <div class="prompt-item">
+                            <div class="prompt-trigger">:git-commit</div>
+                            <div class="prompt-desc">
+                                <strong>Git Commit 訊息</strong> - 請 AI 撰寫符合 Conventional Commits 規範的提交訊息
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="download-card">
+                    <h3>🗄️ 資料庫類</h3>
+                    <div style="display: grid; gap: 15px; margin-top: 15px;">
+                        <div class="prompt-item">
+                            <div class="prompt-trigger">:sql-query</div>
+                            <div class="prompt-desc">
+                                <strong>SQL 查詢</strong> - 請 AI 撰寫或優化 SQL 查詢（完整查詢、邏輯說明、效能考量）
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="download-card">
+                    <h3>🌍 通用工具類</h3>
+                    <div style="display: grid; gap: 15px; margin-top: 15px;">
+                        <div class="prompt-item">
+                            <div class="prompt-trigger">:translate</div>
+                            <div class="prompt-desc">
+                                <strong>翻譯文字</strong> - 請 AI 翻譯文字內容（準確性、自然流暢、專業術語、格式保留）
+                            </div>
+                        </div>
+                        <div class="prompt-item">
+                            <div class="prompt-trigger">:summarize</div>
+                            <div class="prompt-desc">
+                                <strong>內容摘要</strong> - 請 AI 摘要長篇內容（重點提取、結構清晰、保持客觀）
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px;">
+                    <p style="color: #856404; margin: 0;">
+                        <strong>💡 使用提示：</strong>大部分提示詞都支援變數，例如 <code style="background: #fff; padding: 2px 6px; border-radius: 3px;">{{code}}</code>、<code style="background: #fff; padding: 2px 6px; border-radius: 3px;">{{language|繁體中文}}</code> 等，輸入觸發詞後會自動提示填入。
+                    </p>
                 </div>
             </section>
 
