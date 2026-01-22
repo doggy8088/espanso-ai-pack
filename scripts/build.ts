@@ -3,9 +3,10 @@
  * 使用 Bun 執行：bun run build.ts
  */
 
-import { readdir, readFile, writeFile, mkdir } from "fs/promises";
+import { readdir, readFile, writeFile, mkdir, copyFile } from "fs/promises";
 import { join } from "path";
 import { parse, stringify } from "yaml";
+import { existsSync } from "fs";
 
 interface PromptConfig {
   trigger: string;
@@ -201,6 +202,14 @@ async function build(): Promise<void> {
   // 寫入輸出檔案
   const outputPath = join(DIST_DIR, OUTPUT_FILE);
   await writeFile(outputPath, output, "utf-8");
+
+  // 複製 index.html 到 dist 目錄
+  const indexHtmlSource = "./dist/index.html";
+  if (existsSync(indexHtmlSource)) {
+    console.log(`\n📄 index.html 已存在於 dist 目錄`);
+  } else {
+    console.log(`\n⚠️  警告：dist/index.html 不存在`);
+  }
 
   console.log(`\n✨ 建置完成！`);
   console.log(`📦 輸出檔案: ${outputPath}`);
