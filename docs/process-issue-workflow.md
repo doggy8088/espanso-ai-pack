@@ -527,5 +527,5 @@ echo "$PROMPT" | sed 's/^/  /' >> "prompts/$FILENAME"
 ## 相關文件
 
 - [貢獻指南](../CONTRIBUTING.md)
-- [Issue 模板]../.github/ISSUE_TEMPLATE/)
+- [Issue 模板](../.github/ISSUE_TEMPLATE/)
 - [Espanso 套件規格](https://espanso.org/docs/packages/)

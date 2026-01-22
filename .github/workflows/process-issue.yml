@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       github.event_name == 'issue_comment' &&
-      (github.event.issue.labels.*.name == 'prompt-contribution' || 
+      (github.event.issue.labels.*.name == 'prompt-contribution' ||
        contains(github.event.issue.labels.*.name, 'prompt-contribution'))
     permissions:
       contents: read
@@ -25,22 +25,22 @@ jobs:
           script: |
             const comment = context.payload.comment;
             const issue = context.payload.issue;
-            
+
             // 檢查是否為 /check 指令
             if (!comment.body.trim().toLowerCase().startsWith('/check')) {
               console.log('不是 /check 指令，跳過');
               return { shouldValidate: false };
             }
-            
+
             // 檢查是否為 repo owner 或有 write 權限
             const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
               owner: context.repo.owner,
               repo: context.repo.repo,
               username: comment.user.login
             });
-            
+
             const hasWriteAccess = ['admin', 'write'].includes(permission.permission);
-            
+
             if (!hasWriteAccess) {
               console.log(`使用者 ${comment.user.login} 沒有足夠權限`);
               await github.rest.issues.createComment({
@@ -51,7 +51,7 @@ jobs:
               });
               return { shouldValidate: false };
             }
-            
+
             console.log(`使用者 ${comment.user.login} 有權限，開始重新驗證`);
             return { shouldValidate: true };
 
@@ -66,21 +66,21 @@ jobs:
           script: |
             const issue = context.payload.issue;
             const body = issue.body;
-            
+
             // 解析 Issue 內容
             const triggerMatch = body.match(/### Trigger\s*\n+([^\n]+)/i);
             const labelMatch = body.match(/### Label\s*\n+([^\n]+)/i);
             const descriptionMatch = body.match(/### Description\s*\n+([\s\S]*?)(?=### Prompt|$)/i);
-            const promptMatch = body.match(/### Prompt\s*\n+```[\s\S]*?\n([\s\S]*?)```/i) || 
+            const promptMatch = body.match(/### Prompt\s*\n+```[\s\S]*?\n([\s\S]*?)```/i) ||
                                body.match(/### Prompt\s*\n+([\s\S]*?)(?=### |$)/i);
-            
+
             // 檢查是否成功解析所有欄位
             const parseErrors = [];
             if (!triggerMatch) parseErrors.push('❌ 無法解析 Trigger');
             if (!labelMatch) parseErrors.push('❌ 無法解析 Label');
             if (!descriptionMatch) parseErrors.push('❌ 無法解析 Description');
             if (!promptMatch) parseErrors.push('❌ 無法解析 Prompt');
-            
+
             if (parseErrors.length > 0) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
@@ -90,31 +90,31 @@ jobs:
               });
               return;
             }
-            
+
             const trigger = triggerMatch[1].trim();
             const label = labelMatch[1].trim();
             const description = descriptionMatch[1].trim();
             const prompt = promptMatch[1].trim();
-            
+
             // 驗證 trigger 格式
             const validationErrors = [];
-            
+
             if (!trigger.startsWith(':')) {
               validationErrors.push('⚠️ Trigger 必須以冒號 `:` 開頭');
             }
-            
+
             if (trigger.includes(' ')) {
               validationErrors.push('⚠️ Trigger 不可包含空格');
             }
-            
+
             if (trigger.length < 2) {
               validationErrors.push('⚠️ Trigger 長度至少需要 2 個字元');
             }
-            
+
             if (prompt.length < 10) {
               validationErrors.push('⚠️ Prompt 內容過短（至少 10 個字元）');
             }
-            
+
             if (validationErrors.length > 0) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
@@ -124,10 +124,10 @@ jobs:
               });
               return;
             }
-            
+
             // 生成檔案名稱
             const fileName = trigger.replace(/^:/, '').replace(/[^a-zA-Z0-9-]/g, '-') + '.yml';
-            
+
             // 檢查重複 trigger
             const { execSync } = require('child_process');
             let isDuplicate = false;
@@ -137,7 +137,7 @@ jobs:
             } catch (e) {
               // grep 沒找到時會拋出錯誤，這是正常的
             }
-            
+
             if (isDuplicate) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
@@ -147,51 +147,51 @@ jobs:
               });
               return;
             }
-            
+
             // 生成 YAML 檔案內容
             const issueAuthor = issue.user.login;
             const issueNumber = issue.number;
-            
+
             // 處理 prompt 縮排（每行前加兩個空格）
             const indentedPrompt = prompt.split('\n').map(line => `  ${line}`).join('\n');
-            
+
             const yamlContent = `# 提示詞由 Issue #${issueNumber} 貢獻
-# 貢獻者: @${issueAuthor}
+            # 貢獻者: @${issueAuthor}
 
-trigger: "${trigger}"
-label: "${label}"
-description: "${description}"
+            trigger: "${trigger}"
+            label: "${label}"
+            description: "${description}"
 
-prompt: |
-${indentedPrompt}`;
-            
-            // 發送成功訊息，包含完整的 YAML 內容
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue.number,
-              body: `🔄 **重新驗證結果**\n\n✅ **提示詞驗證成功！**
+            prompt: |
+            ${indentedPrompt}`;
 
-以下是即將建立的檔案內容：
+                        // 發送成功訊息，包含完整的 YAML 內容
+                        await github.rest.issues.createComment({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          issue_number: issue.number,
+                          body: `🔄 **重新驗證結果**\n\n✅ **提示詞驗證成功！**
 
-**檔案名稱：** \`prompts/${fileName}\`
+            以下是即將建立的檔案內容：
 
-\`\`\`yaml
-${yamlContent}
-\`\`\`
+            **檔案名稱：** \`prompts/${fileName}\`
 
----
+            \`\`\`yaml
+            ${yamlContent}
+            \`\`\`
 
-**驗證結果：**
-- ✅ Trigger 格式正確
-- ✅ 所有必要欄位完整
-- ✅ 無重複 Trigger
-- ✅ 內容長度符合要求
+            ---
 
-**下一步：**
-維護者可以輸入 \`/approved\` 來核准此提示詞，系統將自動建立上述檔案並合併至專案。`
+            **驗證結果：**
+            - ✅ Trigger 格式正確
+            - ✅ 所有必要欄位完整
+            - ✅ 無重複 Trigger
+            - ✅ 內容長度符合要求
+
+            **下一步：**
+            維護者可以輸入 \`/approved\` 來核准此提示詞，系統將自動建立上述檔案並合併至專案。`
             });
-            
+
             console.log(`重新驗證成功: ${fileName}`);
             console.log(`Trigger: ${trigger}`);
 
@@ -199,7 +199,7 @@ ${yamlContent}
     name: 處理提示詞審核
     runs-on: ubuntu-latest
     if: |
-      github.event.issue.labels.*.name == 'prompt-contribution' || 
+      github.event.issue.labels.*.name == 'prompt-contribution' ||
       contains(github.event.issue.labels.*.name, 'prompt-contribution')
     permissions:
       contents: write
@@ -213,22 +213,22 @@ ${yamlContent}
           script: |
             const comment = context.payload.comment;
             const issue = context.payload.issue;
-            
+
             // 檢查是否為 /approved 指令
             if (!comment.body.trim().toLowerCase().startsWith('/approved')) {
               console.log('不是 /approved 指令，跳過');
               return { approved: false };
             }
-            
+
             // 檢查是否為 repo owner 或有 write 權限
             const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
               owner: context.repo.owner,
               repo: context.repo.repo,
               username: comment.user.login
             });
-            
+
             const hasWriteAccess = ['admin', 'write'].includes(permission.permission);
-            
+
             if (!hasWriteAccess) {
               console.log(`使用者 ${comment.user.login} 沒有足夠權限`);
               await github.rest.issues.createComment({
@@ -239,9 +239,9 @@ ${yamlContent}
               });
               return { approved: false };
             }
-            
+
             console.log(`使用者 ${comment.user.login} 有權限，處理核准`);
-            return { 
+            return {
               approved: true,
               issueNumber: issue.number,
               issueBody: issue.body,
@@ -272,14 +272,14 @@ ${yamlContent}
           script: |
             const issue = context.payload.issue;
             const body = issue.body;
-            
+
             // 解析 Issue 內容
             const triggerMatch = body.match(/### Trigger\s*\n+([^\n]+)/i);
             const labelMatch = body.match(/### Label\s*\n+([^\n]+)/i);
             const descriptionMatch = body.match(/### Description\s*\n+([\s\S]*?)(?=### Prompt|$)/i);
-            const promptMatch = body.match(/### Prompt\s*\n+```[\s\S]*?\n([\s\S]*?)```/i) || 
+            const promptMatch = body.match(/### Prompt\s*\n+```[\s\S]*?\n([\s\S]*?)```/i) ||
                                body.match(/### Prompt\s*\n+([\s\S]*?)(?=### |$)/i);
-            
+
             if (!triggerMatch || !labelMatch || !descriptionMatch || !promptMatch) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
@@ -289,31 +289,31 @@ ${yamlContent}
               });
               return { valid: false };
             }
-            
+
             const trigger = triggerMatch[1].trim();
             const label = labelMatch[1].trim();
             const description = descriptionMatch[1].trim();
             const prompt = promptMatch[1].trim();
-            
+
             // 驗證 trigger 格式
             const errors = [];
-            
+
             if (!trigger.startsWith(':')) {
               errors.push('Trigger 必須以冒號 `:` 開頭');
             }
-            
+
             if (trigger.includes(' ')) {
               errors.push('Trigger 不可包含空格');
             }
-            
+
             if (trigger.length < 2) {
               errors.push('Trigger 長度至少需要 2 個字元');
             }
-            
+
             if (prompt.length < 10) {
               errors.push('Prompt 內容過短');
             }
-            
+
             if (errors.length > 0) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
@@ -323,10 +323,10 @@ ${yamlContent}
               });
               return { valid: false };
             }
-            
+
             // 生成檔案名稱
             const fileName = trigger.replace(/^:/, '').replace(/[^a-zA-Z0-9-]/g, '-') + '.yml';
-            
+
             return {
               valid: true,
               trigger,
@@ -338,7 +338,7 @@ ${yamlContent}
 
       - name: Check for duplicate trigger
         if: |
-          steps.check-approval.outputs.result != '' && 
+          steps.check-approval.outputs.result != '' &&
           fromJSON(steps.check-approval.outputs.result).approved &&
           steps.parse-prompt.outputs.result != '' &&
           fromJSON(steps.parse-prompt.outputs.result).valid
@@ -367,7 +367,7 @@ ${yamlContent}
 
       - name: Create prompt file
         if: |
-          steps.check-approval.outputs.result != '' && 
+          steps.check-approval.outputs.result != '' &&
           fromJSON(steps.check-approval.outputs.result).approved &&
           steps.parse-prompt.outputs.result != '' &&
           fromJSON(steps.parse-prompt.outputs.result).valid &&
@@ -380,24 +380,24 @@ ${yamlContent}
           FILENAME='${{ fromJSON(steps.parse-prompt.outputs.result).fileName }}'
           ISSUE_NUMBER='${{ github.event.issue.number }}'
           ISSUE_AUTHOR='${{ github.event.issue.user.login }}'
-          
+
           cat > "prompts/$FILENAME" << PROMPT_EOF
-# 提示詞由 Issue #$ISSUE_NUMBER 貢獻
-# 貢獻者: @$ISSUE_AUTHOR
+          # 提示詞由 Issue #$ISSUE_NUMBER 貢獻
+          # 貢獻者: @$ISSUE_AUTHOR
 
-trigger: "$TRIGGER"
-label: "$LABEL"
-description: "$DESCRIPTION"
+          trigger: "$TRIGGER"
+          label: "$LABEL"
+          description: "$DESCRIPTION"
 
-prompt: |
-PROMPT_EOF
-          
+          prompt: |
+          PROMPT_EOF
+
           # 處理多行 prompt
           echo "$PROMPT" | sed 's/^/  /' >> "prompts/$FILENAME"
 
       - name: Commit and push
         if: |
-          steps.check-approval.outputs.result != '' && 
+          steps.check-approval.outputs.result != '' &&
           fromJSON(steps.check-approval.outputs.result).approved &&
           steps.parse-prompt.outputs.result != '' &&
           fromJSON(steps.parse-prompt.outputs.result).valid &&
@@ -405,17 +405,17 @@ PROMPT_EOF
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          
+
           FILENAME='${{ fromJSON(steps.parse-prompt.outputs.result).fileName }}'
           TRIGGER='${{ fromJSON(steps.parse-prompt.outputs.result).trigger }}'
-          
+
           git add "prompts/$FILENAME"
           git commit -m "feat: add prompt $TRIGGER from #${{ github.event.issue.number }}"
           git push
 
       - name: Close issue with success message
         if: |
-          steps.check-approval.outputs.result != '' && 
+          steps.check-approval.outputs.result != '' &&
           fromJSON(steps.check-approval.outputs.result).approved &&
           steps.parse-prompt.outputs.result != '' &&
           fromJSON(steps.parse-prompt.outputs.result).valid &&
@@ -425,14 +425,14 @@ PROMPT_EOF
           script: |
             const issue = context.payload.issue;
             const result = ${{ steps.parse-prompt.outputs.result }};
-            
+
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue.number,
               body: `✅ 提示詞已成功加入！\n\n**詳細資訊：**\n- Trigger: \`${result.trigger}\`\n- 檔案: \`prompts/${result.fileName}\`\n\n感謝您的貢獻！🎉`
             });
-            
+
             await github.rest.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -458,27 +458,27 @@ PROMPT_EOF
           script: |
             const issue = context.payload.issue;
             const labels = issue.labels.map(l => l.name);
-            
+
             if (!labels.includes('prompt-contribution')) {
               return;
             }
-            
+
             const body = issue.body;
-            
+
             // 解析 Issue 內容
             const triggerMatch = body.match(/### Trigger\s*\n+([^\n]+)/i);
             const labelMatch = body.match(/### Label\s*\n+([^\n]+)/i);
             const descriptionMatch = body.match(/### Description\s*\n+([\s\S]*?)(?=### Prompt|$)/i);
-            const promptMatch = body.match(/### Prompt\s*\n+```[\s\S]*?\n([\s\S]*?)```/i) || 
+            const promptMatch = body.match(/### Prompt\s*\n+```[\s\S]*?\n([\s\S]*?)```/i) ||
                                body.match(/### Prompt\s*\n+([\s\S]*?)(?=### |$)/i);
-            
+
             // 檢查是否成功解析所有欄位
             const parseErrors = [];
             if (!triggerMatch) parseErrors.push('❌ 無法解析 Trigger');
             if (!labelMatch) parseErrors.push('❌ 無法解析 Label');
             if (!descriptionMatch) parseErrors.push('❌ 無法解析 Description');
             if (!promptMatch) parseErrors.push('❌ 無法解析 Prompt');
-            
+
             if (parseErrors.length > 0) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
@@ -488,31 +488,31 @@ PROMPT_EOF
               });
               return;
             }
-            
+
             const trigger = triggerMatch[1].trim();
             const label = labelMatch[1].trim();
             const description = descriptionMatch[1].trim();
             const prompt = promptMatch[1].trim();
-            
+
             // 驗證 trigger 格式
             const validationErrors = [];
-            
+
             if (!trigger.startsWith(':')) {
               validationErrors.push('⚠️ Trigger 必須以冒號 `:` 開頭');
             }
-            
+
             if (trigger.includes(' ')) {
               validationErrors.push('⚠️ Trigger 不可包含空格');
             }
-            
+
             if (trigger.length < 2) {
               validationErrors.push('⚠️ Trigger 長度至少需要 2 個字元');
             }
-            
+
             if (prompt.length < 10) {
               validationErrors.push('⚠️ Prompt 內容過短（至少 10 個字元）');
             }
-            
+
             if (validationErrors.length > 0) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
@@ -522,10 +522,10 @@ PROMPT_EOF
               });
               return;
             }
-            
+
             // 生成檔案名稱
             const fileName = trigger.replace(/^:/, '').replace(/[^a-zA-Z0-9-]/g, '-') + '.yml';
-            
+
             // 檢查重複 trigger
             const { execSync } = require('child_process');
             let isDuplicate = false;
@@ -535,7 +535,7 @@ PROMPT_EOF
             } catch (e) {
               // grep 沒找到時會拋出錯誤，這是正常的
             }
-            
+
             if (isDuplicate) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
@@ -545,51 +545,51 @@ PROMPT_EOF
               });
               return;
             }
-            
+
             // 生成 YAML 檔案內容
             const issueAuthor = issue.user.login;
             const issueNumber = issue.number;
-            
+
             // 處理 prompt 縮排（每行前加兩個空格）
             const indentedPrompt = prompt.split('\n').map(line => `  ${line}`).join('\n');
-            
+
             const yamlContent = `# 提示詞由 Issue #${issueNumber} 貢獻
-# 貢獻者: @${issueAuthor}
+            # 貢獻者: @${issueAuthor}
 
-trigger: "${trigger}"
-label: "${label}"
-description: "${description}"
+            trigger: "${trigger}"
+            label: "${label}"
+            description: "${description}"
 
-prompt: |
-${indentedPrompt}`;
-            
-            // 發送成功訊息，包含完整的 YAML 內容
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue.number,
-              body: `✅ **提示詞驗證成功！**
+            prompt: |
+            ${indentedPrompt}`;
 
-感謝您的貢獻！以下是即將建立的檔案內容：
+                        // 發送成功訊息，包含完整的 YAML 內容
+                        await github.rest.issues.createComment({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          issue_number: issue.number,
+                          body: `✅ **提示詞驗證成功！**
 
-**檔案名稱：** \`prompts/${fileName}\`
+            感謝您的貢獻！以下是即將建立的檔案內容：
 
-\`\`\`yaml
-${yamlContent}
-\`\`\`
+            **檔案名稱：** \`prompts/${fileName}\`
 
----
+            \`\`\`yaml
+            ${yamlContent}
+            \`\`\`
 
-**驗證結果：**
-- ✅ Trigger 格式正確
-- ✅ 所有必要欄位完整
-- ✅ 無重複 Trigger
-- ✅ 內容長度符合要求
+            ---
 
-**下一步：**
-維護者可以輸入 \`/approved\` 來核准此提示詞，系統將自動建立上述檔案並合併至專案。`
+            **驗證結果：**
+            - ✅ Trigger 格式正確
+            - ✅ 所有必要欄位完整
+            - ✅ 無重複 Trigger
+            - ✅ 內容長度符合要求
+
+            **下一步：**
+            維護者可以輸入 \`/approved\` 來核准此提示詞，系統將自動建立上述檔案並合併至專案。`
             });
-            
+
             console.log(`驗證成功: ${fileName}`);
             console.log(`Trigger: ${trigger}`);
             console.log(`檔案將建立於: prompts/${fileName}`);
