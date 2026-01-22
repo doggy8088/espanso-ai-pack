@@ -280,6 +280,12 @@ jobs:
             const comment = context.payload.comment;
             const issue = context.payload.issue;
 
+            // 檢查是否為評論事件
+            if (!comment) {
+              console.log('不是評論事件，跳過');
+              return { approved: false };
+            }
+
             // 檢查是否為 /approved 指令
             if (!comment.body.trim().toLowerCase().startsWith('/approved')) {
               console.log('不是 /approved 指令，跳過');
