@@ -480,6 +480,15 @@ jobs:
           # 處理多行 prompt
           echo "$PROMPT" | sed 's/^/  /' >> "prompts/$FILENAME"
 
+      - name: Build package
+        if: |
+          steps.check-approval.outputs.result != '' &&
+          fromJSON(steps.check-approval.outputs.result).approved &&
+          steps.parse-prompt.outputs.result != '' &&
+          fromJSON(steps.parse-prompt.outputs.result).valid &&
+          steps.check-duplicate.outputs.duplicate == 'false'
+        run: bun run build
+
       - name: Commit and push
         if: |
           steps.check-approval.outputs.result != '' &&
@@ -495,6 +504,8 @@ jobs:
           TRIGGER='${{ fromJSON(steps.parse-prompt.outputs.result).trigger }}'
 
           git add "prompts/$FILENAME"
+          git add "dist/"
+          git add "_manifest.yml"
           git commit -m "feat: add prompt $TRIGGER from #${{ github.event.issue.number }}"
           git push
 
