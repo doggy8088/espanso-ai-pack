@@ -36,6 +36,7 @@ interface EspansoPackage {
 const PROMPTS_DIR = "./prompts";
 const DIST_DIR = "./dist";
 const OUTPUT_FILE = "package.yml";
+const ROOT_OUTPUT_PATH = `./${OUTPUT_FILE}`;
 
 /**
  * 從 prompt 內容中提取變數
@@ -199,9 +200,10 @@ async function build(): Promise<void> {
   // 手動生成 YAML 以保持格式
   const output = generateYamlOutput(espansoPackage);
 
-  // 寫入輸出檔案
+  // 寫入輸出檔案（dist 與根目錄）
   const outputPath = join(DIST_DIR, OUTPUT_FILE);
   await writeFile(outputPath, output, "utf-8");
+  await writeFile(ROOT_OUTPUT_PATH, output, "utf-8");
 
   // 複製 index.html 到 dist 目錄
   const indexHtmlSource = "./dist/index.html";
@@ -213,6 +215,7 @@ async function build(): Promise<void> {
 
   console.log(`\n✨ 建置完成！`);
   console.log(`📦 輸出檔案: ${outputPath}`);
+  console.log(`📦 根目錄同步: ${ROOT_OUTPUT_PATH}`);
   console.log(`📊 總計 ${matches.length} 個提示詞`);
 }
 

@@ -19,12 +19,13 @@ espanso install espanso-ai-pack \
 **說明**：
 - `--git`：指定 Git repository URL
 - `--external`：表示這是外部套件（非 Hub）
+> 註：`espanso install --git` 會讀取 repository 根目錄的 `package.yml`，本專案建置會自動產生並同步。
 
 ### 方法二：手動安裝
 
 1. **下載最新的 `package.yml`**：
    - 從 [Releases](../../releases) 頁面下載
-   - 或直接從 `dist/package.yml` 複製
+   - 或直接從 repository 根目錄的 `package.yml` / `dist/package.yml` 複製
 
 2. **找到 Espanso 的 packages 目錄**：
    ```bash

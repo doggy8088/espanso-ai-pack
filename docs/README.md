@@ -107,13 +107,14 @@ espanso-ai-pack/
 │   ├── build.ts         # 合併提示詞為 package.yml
 │   └── validate.ts      # 驗證提示詞格式
 ├── dist/                 # 建置產出目錄
-│   └── package.yml      # 最終的 espanso 套件檔案
+│   └── package.yml      # 最終的 espanso 套件檔案（供下載中心使用）
 ├── docs/                 # 文件目錄（您現在在這裡）
 ├── .github/
 │   ├── workflows/       # GitHub Actions CI/CD
 │   └── ISSUE_TEMPLATE/  # Issue 模板
 ├── _manifest.yml         # Espanso 套件 metadata
 ├── package.json          # Bun 專案設定
+├── package.yml           # 建置產出（供 espanso install 使用）
 ├── README.md             # 主要說明文件
 └── LICENSE               # MIT 授權條款
 ```

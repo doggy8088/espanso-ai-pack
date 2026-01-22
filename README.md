@@ -41,6 +41,8 @@
 espanso install espanso-ai-pack --git https://github.com/doggy8088/espanso-ai-pack --external
 ```
 
+> 註：`espanso install --git` 會讀取 repository 根目錄的 `package.yml`，本專案建置會自動產生並同步。
+
 ### 方法二：從 GitHub Pages 下載
 
 前往 **[下載中心](https://doggy8088.github.io/espanso-ai-pack/)** 下載檔案並手動安裝。
@@ -217,7 +219,7 @@ espanso-ai-pack/
 │   ├── build.ts            # 建置腳本
 │   └── validate.ts         # 驗證腳本
 ├── dist/
-│   └── package.yml         # 建置產出（自動生成）
+│   └── package.yml         # 建置產出（供下載中心使用）
 ├── .github/
 │   ├── workflows/
 │   │   ├── ci.yml          # CI/CD 工作流程
@@ -225,6 +227,7 @@ espanso-ai-pack/
 │   └── ISSUE_TEMPLATE/
 │       └── new-prompt.yml  # Issue 模板
 ├── package.json
+├── package.yml             # 建置產出（供 espanso install 使用）
 └── README.md
 ```
 
@@ -254,7 +257,7 @@ bun run build
 2. 解析每個檔案的內容
 3. 提取並處理變數（`{{variable}}` 或 `{{variable|default}}`）
 4. 轉換為 Espanso 支援的格式
-5. 合併所有提示詞到單一的 `dist/package.yml`
+5. 合併所有提示詞並輸出到 `package.yml` 與 `dist/package.yml`
 
 ---
 

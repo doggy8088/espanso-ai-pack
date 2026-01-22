@@ -1,0 +1,287 @@
+# Espanso AI Pack
+# 自動生成的提示詞套件
+# 生成時間: 2026-01-22T07:42:39.707Z
+# 提示詞數量: 10
+
+matches:
+  - trigger: ":code-review"
+    label: "程式碼審查"
+    replace: |
+      請審查以下程式碼，並提供詳細的回饋：
+      
+      1. **程式碼品質**：是否遵循最佳實踐？
+      2. **潛在問題**：是否有 bug 或安全漏洞？
+      3. **效能**：是否有效能改進空間？
+      4. **可讀性**：命名是否清晰？結構是否合理？
+      5. **建議**：具體的改進方案
+      
+      程式碼：
+      ```
+      {{code}}
+      ```
+      
+    vars:
+      - name: "code"
+        type: "form"
+        params:
+          prompt: "請輸入 code"
+
+  - trigger: ":explain-code"
+    label: "解釋程式碼"
+    replace: |
+      請詳細解釋以下程式碼：
+      
+      1. **整體功能**：這段程式碼的主要目的是什麼？
+      2. **逐行解析**：每一段程式碼在做什麼？
+      3. **關鍵概念**：使用了哪些重要的程式設計概念或模式？
+      4. **資料流**：資料是如何流動與轉換的？
+      5. **使用情境**：這段程式碼通常在什麼情況下使用？
+      
+      程式碼：
+      ```
+      {{code}}
+      ```
+      
+    vars:
+      - name: "code"
+        type: "form"
+        params:
+          prompt: "請輸入 code"
+
+  - trigger: ":fix-bug"
+    label: "修復 Bug"
+    replace: |
+      請幫我分析並修復這個 Bug：
+      
+      **錯誤描述**：
+      {{error_description}}
+      
+      **錯誤訊息**（如有）：
+      ```
+      {{error_message}}
+      ```
+      
+      **相關程式碼**：
+      ```
+      {{code}}
+      ```
+      
+      請提供：
+      1. **問題分析**：Bug 的根本原因是什麼？
+      2. **修復方案**：完整的修復程式碼
+      3. **預防措施**：如何避免類似問題再次發生？
+      4. **測試建議**：如何驗證修復是否成功？
+      
+    vars:
+      - name: "error_description"
+        type: "form"
+        params:
+          prompt: "請輸入 error_description"
+      - name: "error_message"
+        type: "form"
+        params:
+          prompt: "請輸入 error_message"
+      - name: "code"
+        type: "form"
+        params:
+          prompt: "請輸入 code"
+
+  - trigger: ":git-commit"
+    label: "Git Commit 訊息"
+    replace: |
+      請根據以下變更內容，撰寫符合 Conventional Commits 規範的 Git Commit 訊息：
+      
+      變更內容：
+      {{changes}}
+      
+      規範要求：
+      1. **格式**：`<type>(<scope>): <subject>`
+      2. **類型**：feat, fix, docs, style, refactor, test, chore
+      3. **主旨**：50 字以內，使用祈使句
+      4. **內文**（如需要）：詳細說明變更原因與內容
+      5. **語言**：使用 {{language}}
+      
+      請提供：
+      - 完整的 commit 訊息
+      - 如有多個邏輯變更，建議拆分方式
+      
+    vars:
+      - name: "changes"
+        type: "form"
+        params:
+          prompt: "請輸入 changes"
+      - name: "language"
+        type: "form"
+        params:
+          prompt: "請輸入 language"
+          default: "英文"
+
+  - trigger: ":refactor"
+    label: "程式碼重構"
+    replace: |
+      請重構以下程式碼，目標是：
+      
+      1. **提升可讀性**：讓程式碼更容易理解
+      2. **減少重複**：消除重複的程式碼（DRY 原則）
+      3. **改善結構**：使用適當的設計模式
+      4. **優化效能**：在不影響可讀性的前提下優化
+      5. **加強型別安全**：如適用，加入型別註解
+      
+      請提供：
+      - 重構後的完整程式碼
+      - 每個改動的說明
+      - 重構前後的比較
+      
+      原始程式碼：
+      ```
+      {{code}}
+      ```
+      
+    vars:
+      - name: "code"
+        type: "form"
+        params:
+          prompt: "請輸入 code"
+
+  - trigger: ":sql-query"
+    label: "SQL 查詢"
+    replace: |
+      請幫我撰寫 SQL 查詢：
+      
+      **需求描述**：
+      {{requirement}}
+      
+      **資料表結構**（如已知）：
+      ```
+      {{schema}}
+      ```
+      
+      **資料庫類型**：{{database}}
+      
+      請提供：
+      1. **完整的 SQL 查詢**
+      2. **查詢邏輯說明**
+      3. **效能考量**：是否需要索引？
+      4. **替代方案**：如有其他寫法，請一併說明
+      
+    vars:
+      - name: "requirement"
+        type: "form"
+        params:
+          prompt: "請輸入 requirement"
+      - name: "schema"
+        type: "form"
+        params:
+          prompt: "請輸入 schema"
+      - name: "database"
+        type: "form"
+        params:
+          prompt: "請輸入 database"
+          default: "PostgreSQL"
+
+  - trigger: ":summarize"
+    label: "內容摘要"
+    replace: |
+      請為以下內容提供摘要：
+      
+      要求：
+      1. **摘要長度**：約 {{length}} 字
+      2. **重點提取**：列出 3-5 個關鍵要點
+      3. **結構清晰**：使用條列式呈現
+      4. **保持客觀**：忠實反映原文內容
+      
+      內容：
+      {{content}}
+      
+    vars:
+      - name: "length"
+        type: "form"
+        params:
+          prompt: "請輸入 length"
+          default: "200"
+      - name: "content"
+        type: "form"
+        params:
+          prompt: "請輸入 content"
+
+  - trigger: ":translate"
+    label: "翻譯文字"
+    replace: |
+      請將以下內容翻譯成 {{target_language}}：
+      
+      要求：
+      1. **準確性**：忠實傳達原文意思
+      2. **自然流暢**：符合目標語言的表達習慣
+      3. **專業術語**：保持技術術語的準確性
+      4. **格式保留**：保持原文的格式結構
+      
+      原文：
+      {{text}}
+      
+    vars:
+      - name: "target_language"
+        type: "form"
+        params:
+          prompt: "請輸入 target_language"
+          default: "繁體中文"
+      - name: "text"
+        type: "form"
+        params:
+          prompt: "請輸入 text"
+
+  - trigger: ":write-doc"
+    label: "撰寫文件"
+    replace: |
+      請為以下程式碼撰寫完整的技術文件：
+      
+      要求：
+      1. **概述**：簡要說明功能與用途
+      2. **安裝/設定**：如何開始使用
+      3. **API 說明**：
+         - 函數/方法簽章
+         - 參數說明（型別、必填/選填、預設值）
+         - 回傳值說明
+      4. **使用範例**：提供實際的程式碼範例
+      5. **注意事項**：使用上的限制或注意點
+      
+      程式碼：
+      ```
+      {{code}}
+      ```
+      
+    vars:
+      - name: "code"
+        type: "form"
+        params:
+          prompt: "請輸入 code"
+
+  - trigger: ":write-test"
+    label: "撰寫測試"
+    replace: |
+      請為以下程式碼撰寫完整的單元測試：
+      
+      要求：
+      1. **測試框架**：使用 {{framework}} 框架
+      2. **覆蓋率**：涵蓋所有主要功能和邊界情況
+      3. **測試案例**：
+         - 正常情況（Happy Path）
+         - 邊界條件（Edge Cases）
+         - 錯誤處理（Error Handling）
+      4. **命名規範**：測試名稱要清楚描述測試目的
+      5. **Mock/Stub**：如需要，說明如何模擬依賴
+      
+      程式碼：
+      ```
+      {{code}}
+      ```
+      
+    vars:
+      - name: "framework"
+        type: "form"
+        params:
+          prompt: "請輸入 framework"
+          default: "Jest"
+      - name: "code"
+        type: "form"
+        params:
+          prompt: "請輸入 code"

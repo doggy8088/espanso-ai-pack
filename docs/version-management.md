@@ -83,7 +83,7 @@ bun run build
 
 建置腳本會自動：
 - ✅ 同步版本號到 `_manifest.yml`
-- ✅ 建置 `dist/package.yml`
+- ✅ 建置 `package.yml` 與 `dist/package.yml`
 - ✅ 更新 `dist/index.html` 中的版本顯示
 
 ### 步驟三：提交變更
