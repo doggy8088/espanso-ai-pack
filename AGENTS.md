@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `prompts/` contains the source YAML prompt files (one prompt per file, e.g., `prompts/code-review.yml`).
+- `prompts/` contains the source YAML prompt files (one prompt per file, e.g., `prompts/codereview.yml`).
 - `scripts/` holds Bun/TypeScript tooling for build, validation, version sync, and bumps.
 - `dist/` contains generated outputs (`dist/package.yml`) used for releases/GitHub Pages; treat as build artifacts.
 - `docs/` hosts contributor and publishing guides.
@@ -17,8 +17,8 @@
 
 ## Coding Style & Naming Conventions
 - YAML prompt files use `trigger`, `label`, `description`, `prompt` keys and a multi-line block (`prompt: |`). When a variable should accept multi-line input (e.g. code, stack traces, long text), add `form_fields` with `multiline: true` for that variable.
-- Triggers must start with `:` and contain no spaces; prefer lowercase kebab-case (e.g., `:code-review`).
-- File names should mirror the trigger in kebab-case (e.g., `prompts/code-review.yml`).
+- Triggers must start with `:` and contain no spaces; prefer lowercase without dashes (e.g., `:codereview`).
+- File names should mirror the trigger without dashes (e.g., `prompts/codereview.yml`).
 - Prompt variables use `{{name}}` or `{{name|default}}`; keep variable names descriptive.
 - TypeScript scripts use ES modules, 2-space indentation, double quotes, and semicolons (match existing style).
 
@@ -36,3 +36,4 @@ PRs should include:
 
 ## Security & Configuration Tips
 Prompts are public content. Do not add secrets, tokens, or personal data. If a prompt needs input, use variables instead of hard-coded values.
+

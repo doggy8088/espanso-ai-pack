@@ -1,7 +1,7 @@
 # SQL 查詢提示詞
 # SQL Query Prompt
 
-trigger: ":sql-query"
+trigger: ":sqlquery"
 label: "SQL 查詢"
 description: "請 AI 撰寫或優化 SQL 查詢"
 
@@ -29,3 +29,4 @@ form_fields:
     multiline: true
   schema:
     multiline: true
+

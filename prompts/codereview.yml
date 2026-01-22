@@ -1,7 +1,7 @@
 # 程式碼審查提示詞
 # Code Review Prompt
 
-trigger: ":code-review"
+trigger: ":codereview"
 label: "程式碼審查"
 description: "請 AI 審查程式碼並提供改進建議"
 
@@ -22,3 +22,4 @@ prompt: |
 form_fields:
   code:
     multiline: true
+

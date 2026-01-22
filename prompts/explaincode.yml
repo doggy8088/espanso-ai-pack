@@ -1,7 +1,7 @@
 # 程式碼解釋提示詞
 # Code Explanation Prompt
 
-trigger: ":explain-code"
+trigger: ":explaincode"
 label: "解釋程式碼"
 description: "請 AI 詳細解釋程式碼的功能與邏輯"
 
@@ -22,3 +22,4 @@ prompt: |
 form_fields:
   code:
     multiline: true
+

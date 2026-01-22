@@ -94,13 +94,13 @@ espanso uninstall espanso-ai-pack
 
 ### 基本使用
 
-1. 在任何文字輸入欄位中輸入觸發詞（例如：`:code-review`）
+1. 在任何文字輸入欄位中輸入觸發詞（例如：`:codereview`）
 2. Espanso 會自動將觸發詞替換為完整的提示詞模板
 3. 如果提示詞包含變數，會彈出表單讓您填寫
 
 ### 範例
 
-輸入 `:code-review` 後，會自動展開為：
+輸入 `:codereview` 後，會自動展開為：
 
 ```
 請審查以下程式碼，並提供詳細的回饋：
@@ -124,14 +124,14 @@ espanso uninstall espanso-ai-pack
 
 | 觸發詞 | 名稱 | 說明 |
 |--------|------|------|
-| `:code-review` | 程式碼審查 | 請 AI 審查程式碼並提供改進建議 |
-| `:explain-code` | 解釋程式碼 | 請 AI 詳細解釋程式碼的功能與邏輯 |
+| `:codereview` | 程式碼審查 | 請 AI 審查程式碼並提供改進建議 |
+| `:explaincode` | 解釋程式碼 | 請 AI 詳細解釋程式碼的功能與邏輯 |
 | `:refactor` | 程式碼重構 | 請 AI 重構程式碼以提升品質 |
-| `:write-test` | 撰寫測試 | 請 AI 為程式碼撰寫單元測試 |
-| `:fix-bug` | 修復 Bug | 請 AI 分析並修復程式碼中的錯誤 |
-| `:write-doc` | 撰寫文件 | 請 AI 為程式碼撰寫技術文件 |
-| `:git-commit` | Git Commit 訊息 | 請 AI 撰寫符合規範的 Git Commit 訊息 |
-| `:sql-query` | SQL 查詢 | 請 AI 撰寫或優化 SQL 查詢 |
+| `:writetest` | 撰寫測試 | 請 AI 為程式碼撰寫單元測試 |
+| `:fixbug` | 修復 Bug | 請 AI 分析並修復程式碼中的錯誤 |
+| `:writedoc` | 撰寫文件 | 請 AI 為程式碼撰寫技術文件 |
+| `:gitcommit` | Git Commit 訊息 | 請 AI 撰寫符合規範的 Git Commit 訊息 |
+| `:sqlquery` | SQL 查詢 | 請 AI 撰寫或優化 SQL 查詢 |
 
 ### 文字處理類
 
@@ -236,8 +236,8 @@ bun install
 ```
 espanso-ai-pack/
 ├── prompts/                 # 提示詞原始檔案
-│   ├── code-review.yml
-│   ├── explain-code.yml
+│   ├── codereview.yml
+│   ├── explaincode.yml
 │   └── ...
 ├── scripts/
 │   ├── build.ts            # 建置腳本
@@ -317,3 +317,4 @@ bun run build
 **如果這個專案對您有幫助，歡迎給個 ⭐️ Star！**
 
 </div>
+

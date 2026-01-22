@@ -1,6 +1,6 @@
 {
   "name": "espanso-ai-pack",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Espanso 提示詞套件 - 收集常見的 AI 提示詞",
   "type": "module",
   "scripts": {

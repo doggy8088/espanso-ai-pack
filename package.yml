@@ -1,10 +1,10 @@
 # Espanso AI Pack
 # 自動生成的提示詞套件
-# 生成時間: 2026-01-22T09:14:22.861Z
+# 生成時間: 2026-01-22T09:53:14.576Z
 # 提示詞數量: 10
 
 matches:
-  - trigger: ":code-review"
+  - trigger: ":codereview"
     label: "程式碼審查"
     form: |
       請審查以下程式碼，並提供詳細的回饋：
@@ -24,7 +24,7 @@ matches:
       code:
         multiline: true
 
-  - trigger: ":explain-code"
+  - trigger: ":explaincode"
     label: "解釋程式碼"
     form: |
       請詳細解釋以下程式碼：
@@ -44,7 +44,7 @@ matches:
       code:
         multiline: true
 
-  - trigger: ":fix-bug"
+  - trigger: ":fixbug"
     label: "修復 Bug"
     form: |
       請幫我分析並修復這個 Bug：
@@ -76,7 +76,7 @@ matches:
       code:
         multiline: true
 
-  - trigger: ":git-commit"
+  - trigger: ":gitcommit"
     label: "Git Commit 訊息"
     form: |
       請根據以下變更內容，撰寫符合 Conventional Commits 規範的 Git Commit 訊息：
@@ -126,7 +126,7 @@ matches:
       code:
         multiline: true
 
-  - trigger: ":sql-query"
+  - trigger: ":sqlquery"
     label: "SQL 查詢"
     form: |
       請幫我撰寫 SQL 查詢：
@@ -195,7 +195,7 @@ matches:
       target_language:
         default: "繁體中文"
 
-  - trigger: ":write-doc"
+  - trigger: ":writedoc"
     label: "撰寫文件"
     form: |
       請為以下程式碼撰寫完整的技術文件：
@@ -219,7 +219,7 @@ matches:
       code:
         multiline: true
 
-  - trigger: ":write-test"
+  - trigger: ":writetest"
     label: "撰寫測試"
     form: |
       請為以下程式碼撰寫完整的單元測試：

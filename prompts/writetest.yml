@@ -1,7 +1,7 @@
 # 撰寫測試提示詞
 # Write Test Prompt
 
-trigger: ":write-test"
+trigger: ":writetest"
 label: "撰寫測試"
 description: "請 AI 為程式碼撰寫單元測試"
 
@@ -26,3 +26,4 @@ prompt: |
 form_fields:
   code:
     multiline: true
+

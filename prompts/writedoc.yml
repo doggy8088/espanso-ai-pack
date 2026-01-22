@@ -1,7 +1,7 @@
 # 撰寫文件提示詞
 # Write Documentation Prompt
 
-trigger: ":write-doc"
+trigger: ":writedoc"
 label: "撰寫文件"
 description: "請 AI 為程式碼撰寫技術文件"
 
@@ -26,3 +26,4 @@ prompt: |
 form_fields:
   code:
     multiline: true
+

@@ -131,7 +131,7 @@ espanso package list
 
 ### 2. 測試 Trigger
 
-在任何文字編輯器中輸入 `:code-review`，應該會自動展開為提示詞。
+在任何文字編輯器中輸入 `:codereview`，應該會自動展開為提示詞。
 
 ### 3. 檢查套件路徑
 
@@ -213,3 +213,4 @@ espanso install company-prompts \
 ---
 
 **需要協助？** 請到 [Issues](../../issues) 提問。
+

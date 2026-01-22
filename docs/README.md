@@ -50,7 +50,7 @@
    espanso install espanso-ai-pack
    ```
 
-2. **開始使用**：在任何文字輸入欄位輸入 `:code-review`
+2. **開始使用**：在任何文字輸入欄位輸入 `:codereview`
 
 3. **查看所有提示詞**：參考 [README - 提示詞列表](../README.md#提示詞列表)
 
@@ -131,3 +131,4 @@ espanso-ai-pack/
 ---
 
 **文件有誤或需要補充？** 歡迎提 PR 或 Issue！
+

@@ -1,7 +1,7 @@
 # Git Commit 訊息提示詞
 # Git Commit Message Prompt
 
-trigger: ":git-commit"
+trigger: ":gitcommit"
 label: "Git Commit 訊息"
 description: "請 AI 撰寫符合規範的 Git Commit 訊息"
 
@@ -25,3 +25,4 @@ prompt: |
 form_fields:
   changes:
     multiline: true
+

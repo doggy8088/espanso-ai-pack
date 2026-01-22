@@ -84,7 +84,7 @@ matches:
   - trigger: ":hello"
     replace: "Hello from package"
   
-  - trigger: ":code-review"
+  - trigger: ":codereview"
     replace: |
       請審查以下程式碼...
     vars:
@@ -406,3 +406,4 @@ espanso restart
 ---
 
 **祝您上架順利！🎉**
+
