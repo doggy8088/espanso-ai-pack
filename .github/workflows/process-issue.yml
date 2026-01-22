@@ -169,16 +169,6 @@ jobs:
               // grep 沒找到時會拋出錯誤，這是正常的
             }
 
-            if (isDuplicateTrigger) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                body: `🔄 **重新驗證結果**\n\n⚠️ **Trigger 重複提醒**\n\n這個 Trigger \`${trigger}\` 已經存在於專案中。如果您確定要使用相同的 Trigger，請確保檔案名稱不同。\n\n您可以搜尋 [prompts/ 目錄](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/prompts) 查看現有的 Trigger。`
-              });
-              return;
-            }
-
             // 生成 YAML 檔案內容
             const issueAuthor = issue.user.login;
             const issueNumber = issue.number;
@@ -196,12 +186,8 @@ jobs:
             prompt: |
             ${indentedPrompt}`;
 
-                        // 發送成功訊息，包含完整的 YAML 內容
-                        await github.rest.issues.createComment({
-                          owner: context.repo.owner,
-                          repo: context.repo.repo,
-                          issue_number: issue.number,
-                          body: `🔄 **重新驗證結果**\n\n✅ **提示詞驗證成功！**
+            // 建立驗證訊息
+            let validationMessage = `🔄 **重新驗證結果**\n\n✅ **提示詞驗證成功！**
 
             以下是即將建立的檔案內容：
 
@@ -216,8 +202,19 @@ jobs:
             **驗證結果：**
             - ✅ Trigger 格式正確
             - ✅ 所有必要欄位完整
-            - ✅ 無重複 Trigger
-            - ✅ 內容長度符合要求
+            - ${isDuplicateTrigger ? '⚠️ Trigger 重複（允許，但請確認檔名不同）' : '✅ 無重複 Trigger'}
+            - ✅ 內容長度符合要求`;
+
+            if (isDuplicateTrigger) {
+              validationMessage += `\n\n---\n\n⚠️ **提醒**：這個 Trigger \`${trigger}\` 已經存在於專案中。只要檔案名稱不同即可合併。您可以搜尋 [prompts/ 目錄](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/prompts) 查看現有的 Trigger。`;
+            }
+
+            // 發送成功訊息，包含完整的 YAML 內容
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: validationMessage
 
             **下一步：**
             維護者可以輸入 \`/approved\` 來核准此提示詞，系統將自動建立上述檔案並合併至專案。`
@@ -700,16 +697,6 @@ jobs:
               // grep 沒找到時會拋出錯誤，這是正常的
             }
 
-            if (isDuplicateTrigger) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                body: `⚠️ **Trigger 重複提醒**\n\n這個 Trigger \`${trigger}\` 已經存在於專案中。如果您確定要使用相同的 Trigger，請確保檔案名稱不同。\n\n您可以搜尋 [prompts/ 目錄](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/prompts) 查看現有的 Trigger。`
-              });
-              return;
-            }
-
             // 生成 YAML 檔案內容
             const issueAuthor = issue.user.login;
             const issueNumber = issue.number;
@@ -727,12 +714,8 @@ jobs:
             prompt: |
             ${indentedPrompt}`;
 
-                        // 發送成功訊息，包含完整的 YAML 內容
-                        await github.rest.issues.createComment({
-                          owner: context.repo.owner,
-                          repo: context.repo.repo,
-                          issue_number: issue.number,
-                          body: `✅ **提示詞驗證成功！**
+            // 建立驗證訊息
+            let validationMessage = `✅ **提示詞驗證成功！**
 
             感謝您的貢獻！以下是即將建立的檔案內容：
 
@@ -747,8 +730,19 @@ jobs:
             **驗證結果：**
             - ✅ Trigger 格式正確
             - ✅ 所有必要欄位完整
-            - ✅ 無重複 Trigger
-            - ✅ 內容長度符合要求
+            - ${isDuplicateTrigger ? '⚠️ Trigger 重複（允許，但請確認檔名不同）' : '✅ 無重複 Trigger'}
+            - ✅ 內容長度符合要求`;
+
+            if (isDuplicateTrigger) {
+              validationMessage += `\n\n---\n\n⚠️ **提醒**：這個 Trigger \`${trigger}\` 已經存在於專案中。只要檔案名稱不同即可合併。您可以搜尋 [prompts/ 目錄](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/prompts) 查看現有的 Trigger。`;
+            }
+
+            // 發送成功訊息，包含完整的 YAML 內容
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: validationMessage
 
             **下一步：**
             維護者可以輸入 \`/approved\` 來核准此提示詞，系統將自動建立上述檔案並合併至專案。`
