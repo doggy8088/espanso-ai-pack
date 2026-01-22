@@ -3,6 +3,8 @@ name: Process Prompt Contribution
 on:
   issue_comment:
     types: [created]
+  issues:
+    types: [opened]
 
 jobs:
   process-approval:
@@ -302,7 +304,3 @@ jobs:
                 });
               }
             }
-
-on:
-  issues:
-    types: [opened]
