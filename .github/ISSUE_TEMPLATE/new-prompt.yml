@@ -23,6 +23,15 @@ body:
       required: true
 
   - type: input
+    id: filename
+    attributes:
+      label: 檔案名稱
+      description: 生成的 YAML 檔案名稱（不含 .yml 副檔名，僅限小寫英文、數字和破折號）
+      placeholder: "my-prompt"
+    validations:
+      required: true
+
+  - type: input
     id: label
     attributes:
       label: Label

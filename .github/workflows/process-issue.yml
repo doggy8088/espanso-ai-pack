@@ -80,6 +80,7 @@ jobs:
 
             // 解析 Issue 內容
             const triggerMatch = body.match(/### Trigger\s*\n+([^\n]+)/i);
+            const filenameMatch = body.match(/### 檔案名稱\s*\n+([^\n]+)/i);
             const labelMatch = body.match(/### Label\s*\n+([^\n]+)/i);
             const descriptionMatch = body.match(/### Description\s*\n+([\s\S]*?)(?=### Prompt|$)/i);
             const promptMatch = body.match(/### Prompt\s*\n+```[\s\S]*?\n([\s\S]*?)```/i) ||
@@ -88,6 +89,7 @@ jobs:
             // 檢查是否成功解析所有欄位
             const parseErrors = [];
             if (!triggerMatch) parseErrors.push('❌ 無法解析 Trigger');
+            if (!filenameMatch) parseErrors.push('❌ 無法解析 檔案名稱');
             if (!labelMatch) parseErrors.push('❌ 無法解析 Label');
             if (!descriptionMatch) parseErrors.push('❌ 無法解析 Description');
             if (!promptMatch) parseErrors.push('❌ 無法解析 Prompt');
@@ -103,6 +105,7 @@ jobs:
             }
 
             const trigger = triggerMatch[1].trim();
+            const filename = filenameMatch[1].trim();
             const label = labelMatch[1].trim();
             const description = descriptionMatch[1].trim();
             const prompt = promptMatch[1].trim();
@@ -122,6 +125,10 @@ jobs:
               validationErrors.push('⚠️ Trigger 長度至少需要 2 個字元');
             }
 
+            if (!/^[a-z0-9-]+$/.test(filename)) {
+              validationErrors.push('⚠️ 檔案名稱只能包含小寫英文、數字和破折號');
+            }
+
             if (prompt.length < 10) {
               validationErrors.push('⚠️ Prompt 內容過短（至少 10 個字元）');
             }
@@ -136,25 +143,38 @@ jobs:
               return;
             }
 
-            // 生成檔案名稱
-            const fileName = trigger.replace(/^:/, '').replace(/[^a-zA-Z0-9-]/g, '-') + '.yml';
+            // 使用使用者提供的檔案名稱
+            const fileName = filename + '.yml';
 
-            // 檢查重複 trigger
+            // 檢查檔案名稱是否重複
             const { execSync } = require('child_process');
-            let isDuplicate = false;
-            try {
-              execSync(`grep -r "trigger: \\"${trigger}\\"" prompts/ 2>/dev/null || grep -r "trigger: ${trigger}" prompts/ 2>/dev/null`);
-              isDuplicate = true;
-            } catch (e) {
-              // grep 沒找到時會拋出錯誤，這是正常的
-            }
-
-            if (isDuplicate) {
+            const fs = require('fs');
+            
+            if (fs.existsSync(`prompts/${fileName}`)) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issue.number,
-                body: `🔄 **重新驗證結果**\n\n❌ **Trigger 重複**\n\n這個 Trigger \`${trigger}\` 已經存在於專案中，請使用不同的 Trigger。\n\n您可以搜尋 [prompts/ 目錄](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/prompts) 查看現有的 Trigger。`
+                body: `🔄 **重新驗證結果**\n\n❌ **檔案名稱重複**\n\n檔案 \`prompts/${fileName}\` 已經存在，請使用不同的檔案名稱。\n\n您可以瀏覽 [prompts/ 目錄](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/prompts) 查看現有的檔案。`
+              });
+              return;
+            }
+
+            // 檢查重複 trigger
+            let isDuplicateTrigger = false;
+            try {
+              execSync(`grep -r "trigger: \\"${trigger}\\"" prompts/ 2>/dev/null || grep -r "trigger: ${trigger}" prompts/ 2>/dev/null`);
+              isDuplicateTrigger = true;
+            } catch (e) {
+              // grep 沒找到時會拋出錯誤，這是正常的
+            }
+
+            if (isDuplicateTrigger) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `🔄 **重新驗證結果**\n\n⚠️ **Trigger 重複提醒**\n\n這個 Trigger \`${trigger}\` 已經存在於專案中。如果您確定要使用相同的 Trigger，請確保檔案名稱不同。\n\n您可以搜尋 [prompts/ 目錄](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/prompts) 查看現有的 Trigger。`
               });
               return;
             }
@@ -321,22 +341,24 @@ jobs:
 
             // 解析 Issue 內容
             const triggerMatch = body.match(/### Trigger\s*\n+([^\n]+)/i);
+            const filenameMatch = body.match(/### 檔案名稱\s*\n+([^\n]+)/i);
             const labelMatch = body.match(/### Label\s*\n+([^\n]+)/i);
             const descriptionMatch = body.match(/### Description\s*\n+([\s\S]*?)(?=### Prompt|$)/i);
             const promptMatch = body.match(/### Prompt\s*\n+```[\s\S]*?\n([\s\S]*?)```/i) ||
                                body.match(/### Prompt\s*\n+([\s\S]*?)(?=### |$)/i);
 
-            if (!triggerMatch || !labelMatch || !descriptionMatch || !promptMatch) {
+            if (!triggerMatch || !filenameMatch || !labelMatch || !descriptionMatch || !promptMatch) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issue.number,
-                body: `❌ 無法解析提示詞內容，請確保格式正確。\n\n**解析結果：**\n- Trigger: ${triggerMatch ? '✅' : '❌'}\n- Label: ${labelMatch ? '✅' : '❌'}\n- Description: ${descriptionMatch ? '✅' : '❌'}\n- Prompt: ${promptMatch ? '✅' : '❌'}`
+                body: `❌ 無法解析提示詞內容，請確保格式正確。\n\n**解析結果：**\n- Trigger: ${triggerMatch ? '✅' : '❌'}\n- 檔案名稱: ${filenameMatch ? '✅' : '❌'}\n- Label: ${labelMatch ? '✅' : '❌'}\n- Description: ${descriptionMatch ? '✅' : '❌'}\n- Prompt: ${promptMatch ? '✅' : '❌'}`
               });
               return { valid: false };
             }
 
             const trigger = triggerMatch[1].trim();
+            const filename = filenameMatch[1].trim();
             const label = labelMatch[1].trim();
             const description = descriptionMatch[1].trim();
             const prompt = promptMatch[1].trim();
@@ -356,6 +378,10 @@ jobs:
               errors.push('Trigger 長度至少需要 2 個字元');
             }
 
+            if (!/^[a-z0-9-]+$/.test(filename)) {
+              errors.push('檔案名稱只能包含小寫英文、數字和破折號');
+            }
+
             if (prompt.length < 10) {
               errors.push('Prompt 內容過短');
             }
@@ -370,8 +396,21 @@ jobs:
               return { valid: false };
             }
 
-            // 生成檔案名稱
-            const fileName = trigger.replace(/^:/, '').replace(/[^a-zA-Z0-9-]/g, '-') + '.yml';
+            // 使用使用者提供的檔案名稱
+            const fileName = filename + '.yml';
+
+            // 檢查檔案名稱是否重複
+            const fs = require('fs');
+            
+            if (fs.existsSync(`prompts/${fileName}`)) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `❌ **檔案名稱重複**\n\n檔案 \`prompts/${fileName}\` 已經存在，請使用不同的檔案名稱。\n\n您可以瀏覽 [prompts/ 目錄](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/prompts) 查看現有的檔案。`
+              });
+              return { valid: false, duplicateFile: true };
+            }
 
             return {
               valid: true,
@@ -555,6 +594,7 @@ jobs:
 
             // 解析 Issue 內容
             const triggerMatch = body.match(/### Trigger\s*\n+([^\n]+)/i);
+            const filenameMatch = body.match(/### 檔案名稱\s*\n+([^\n]+)/i);
             const labelMatch = body.match(/### Label\s*\n+([^\n]+)/i);
             const descriptionMatch = body.match(/### Description\s*\n+([\s\S]*?)(?=### Prompt|$)/i);
             const promptMatch = body.match(/### Prompt\s*\n+```[\s\S]*?\n([\s\S]*?)```/i) ||
@@ -563,6 +603,7 @@ jobs:
             // 檢查是否成功解析所有欄位
             const parseErrors = [];
             if (!triggerMatch) parseErrors.push('❌ 無法解析 Trigger');
+            if (!filenameMatch) parseErrors.push('❌ 無法解析 檔案名稱');
             if (!labelMatch) parseErrors.push('❌ 無法解析 Label');
             if (!descriptionMatch) parseErrors.push('❌ 無法解析 Description');
             if (!promptMatch) parseErrors.push('❌ 無法解析 Prompt');
@@ -578,6 +619,7 @@ jobs:
             }
 
             const trigger = triggerMatch[1].trim();
+            const filename = filenameMatch[1].trim();
             const label = labelMatch[1].trim();
             const description = descriptionMatch[1].trim();
             const prompt = promptMatch[1].trim();
@@ -597,6 +639,10 @@ jobs:
               validationErrors.push('⚠️ Trigger 長度至少需要 2 個字元');
             }
 
+            if (!/^[a-z0-9-]+$/.test(filename)) {
+              validationErrors.push('⚠️ 檔案名稱只能包含小寫英文、數字和破折號');
+            }
+
             if (prompt.length < 10) {
               validationErrors.push('⚠️ Prompt 內容過短（至少 10 個字元）');
             }
@@ -611,25 +657,38 @@ jobs:
               return;
             }
 
-            // 生成檔案名稱
-            const fileName = trigger.replace(/^:/, '').replace(/[^a-zA-Z0-9-]/g, '-') + '.yml';
+            // 使用使用者提供的檔案名稱
+            const fileName = filename + '.yml';
 
-            // 檢查重複 trigger
+            // 檢查檔案名稱是否重複
             const { execSync } = require('child_process');
-            let isDuplicate = false;
-            try {
-              execSync(`grep -r "trigger: \\"${trigger}\\"" prompts/ 2>/dev/null || grep -r "trigger: ${trigger}" prompts/ 2>/dev/null`);
-              isDuplicate = true;
-            } catch (e) {
-              // grep 沒找到時會拋出錯誤，這是正常的
-            }
-
-            if (isDuplicate) {
+            const fs = require('fs');
+            
+            if (fs.existsSync(`prompts/${fileName}`)) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issue.number,
-                body: `❌ **Trigger 重複**\n\n這個 Trigger \`${trigger}\` 已經存在於專案中，請使用不同的 Trigger。\n\n您可以搜尋 [prompts/ 目錄](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/prompts) 查看現有的 Trigger。`
+                body: `❌ **檔案名稱重複**\n\n檔案 \`prompts/${fileName}\` 已經存在，請使用不同的檔案名稱。\n\n您可以瀏覽 [prompts/ 目錄](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/prompts) 查看現有的檔案。`
+              });
+              return;
+            }
+
+            // 檢查重複 trigger（僅提醒，不阻止）
+            let isDuplicateTrigger = false;
+            try {
+              execSync(`grep -r "trigger: \\"${trigger}\\"" prompts/ 2>/dev/null || grep -r "trigger: ${trigger}" prompts/ 2>/dev/null`);
+              isDuplicateTrigger = true;
+            } catch (e) {
+              // grep 沒找到時會拋出錯誤，這是正常的
+            }
+
+            if (isDuplicateTrigger) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `⚠️ **Trigger 重複提醒**\n\n這個 Trigger \`${trigger}\` 已經存在於專案中。如果您確定要使用相同的 Trigger，請確保檔案名稱不同。\n\n您可以搜尋 [prompts/ 目錄](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/prompts) 查看現有的 Trigger。`
               });
               return;
             }
