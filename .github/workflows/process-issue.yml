@@ -487,8 +487,7 @@ jobs:
           steps.check-approval.outputs.result != '' &&
           fromJSON(steps.check-approval.outputs.result).approved &&
           steps.parse-prompt.outputs.result != '' &&
-          fromJSON(steps.parse-prompt.outputs.result).valid &&
-          steps.check-duplicate.outputs.duplicate == 'false'
+          fromJSON(steps.parse-prompt.outputs.result).valid
         run: bun run build
 
       - name: Commit and push
@@ -496,8 +495,7 @@ jobs:
           steps.check-approval.outputs.result != '' &&
           fromJSON(steps.check-approval.outputs.result).approved &&
           steps.parse-prompt.outputs.result != '' &&
-          fromJSON(steps.parse-prompt.outputs.result).valid &&
-          steps.check-duplicate.outputs.duplicate == 'false'
+          fromJSON(steps.parse-prompt.outputs.result).valid
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -516,8 +514,7 @@ jobs:
           steps.check-approval.outputs.result != '' &&
           fromJSON(steps.check-approval.outputs.result).approved &&
           steps.parse-prompt.outputs.result != '' &&
-          fromJSON(steps.parse-prompt.outputs.result).valid &&
-          steps.check-duplicate.outputs.duplicate == 'false'
+          fromJSON(steps.parse-prompt.outputs.result).valid
         uses: actions/github-script@v7
         with:
           script: |
